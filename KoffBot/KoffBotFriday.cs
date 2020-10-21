@@ -16,7 +16,7 @@ namespace KoffBot
             var client = new HttpClient();
             var content = new HttpRequestMessage(HttpMethod.Post, System.Environment.GetEnvironmentVariable("SlackWebHook"))
             {
-                Content = new StringContent("{\"text\": \"It's friday! :meow_party: You should celebrate with a Koff! :koff:\" }", Encoding.UTF8, "application/json")
+                Content = new StringContent("{\"text\": \"Se on perjantai! :meow_party: Mikset juhlisi ottamalla Koff! :koff:\" }", Encoding.UTF8, "application/json")
             };
             await client.SendAsync(content);
         }
