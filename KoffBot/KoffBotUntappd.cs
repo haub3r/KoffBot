@@ -21,7 +21,7 @@ namespace KoffBot
             var client = new HttpClient();
             var content = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())
             {
-                Content = new StringContent("{\"text\": \"Muista, että voit arvostella koffin untappd sovelluksessa. Sovelluksen saa osoitteesta: www.untappd.com. Annathan koffille viisi tähteä :koff:\" }", Encoding.UTF8, "application/json")
+                Content = new StringContent("{\"text\": \"Muista, että voit arvostella Koffin Untappd-sovelluksessa. Sovelluksen saa osoitteesta: www.untappd.com. Annathan Koffille viisi tähteä :koff:\" }", Encoding.UTF8, "application/json")
             };
             await client.SendAsync(content);
 
