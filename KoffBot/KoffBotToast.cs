@@ -19,7 +19,7 @@ namespace KoffBot
             log.LogInformation("KoffBot activated. Ready for furious toasting.");
 
             var client = new HttpClient();
-            var content = new HttpRequestMessage(HttpMethod.Post, System.Environment.GetEnvironmentVariable("SlackWebHook"))
+            var content = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())
             {
                 Content = new StringContent("{\"text\": \"Koff!\" }", Encoding.UTF8, "application/json")
             };

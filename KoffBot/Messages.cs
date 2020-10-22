@@ -9,7 +9,7 @@
             "Jouni, tänään on perjantai! Jallua saa ottaa, mutta ota mieluummin Koff! :koff:",
             "Onko se taas perjantai? :meow_party: Koff!",
             "Miten niin liian aikaista oluelle? Nyt on perjantai! Koff!",
-            "Mitä olisi elämä ilman perjantaita? Pelkkää työtä! Joten ole tänään kiitollinen perjantaista ja ota yksi (tai useampi) Koff!"
+            "Mitä olisi elämä ilman perjantaita? Pelkkää työtä! Joten ole tänään kiitollinen perjantaista ja ota yksi (tai useampi) Koff!",
             "Perjantai, päivien aatelinen! Koff! Koff! :koff:"
         };
     }

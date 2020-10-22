@@ -21,7 +21,7 @@ namespace KoffBot
             var client = new HttpClient();
             Random random = new Random();
             int randomIndex = random.Next(0, Messages.FridayPossibilities.Length);
-            var content = new HttpRequestMessage(HttpMethod.Post, Environment.GetEnvironmentVariable("SlackWebHook"))
+            var content = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())
             {
                 Content = new StringContent("{\"text\": \"" + Messages.FridayPossibilities[randomIndex] + "\" }", Encoding.UTF8, "application/json")
             };
