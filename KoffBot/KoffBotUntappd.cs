@@ -17,7 +17,9 @@ namespace KoffBot
             ILogger log)
         {
             log.LogInformation("KoffBot activated. Ready to advertise untappd.");
-
+#if !DEBUG
+            await AuthenticationService.Authenticate(req, log);
+#endif            
             var client = new HttpClient();
             var content = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())
             {

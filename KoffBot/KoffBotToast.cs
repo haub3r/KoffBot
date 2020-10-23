@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
+using System.Linq;
 
 namespace KoffBot
 {
@@ -17,7 +19,9 @@ namespace KoffBot
             ILogger log)
         {
             log.LogInformation("KoffBot activated. Ready for furious toasting.");
-
+#if !DEBUG
+            await AuthenticationService.Authenticate(req, log);
+#endif
             var client = new HttpClient();
             var content = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())
             {
