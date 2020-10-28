@@ -6,6 +6,7 @@ using System.Text;
 using System.Security.Cryptography;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using System.Threading.Tasks;
+using System.Security.Authentication;
 
 namespace KoffBot
 {
@@ -15,6 +16,10 @@ namespace KoffBot
         {
             req.Headers.TryGetValue("X-Slack-Signature", out var slackSignature);
             req.Headers.TryGetValue("X-Slack-Request-Timestamp", out var slackTimestamp);
+            if (string.IsNullOrEmpty(slackSignature) || string.IsNullOrEmpty(slackTimestamp))
+            {
+                throw new AuthenticationException("Access denied. The request was missing one or more Slack headers.");
+            }
 
             var signingSecret = Environment.GetEnvironmentVariable("SlackSigningSecret");
             var key = Encoding.UTF8.GetBytes(signingSecret);
@@ -27,7 +32,7 @@ namespace KoffBot
 
                 if (finalBase != slackSignature)
                 {
-                    throw new UnauthorizedAccessException("Access denied.");
+                    throw new AuthenticationException("Access denied. The calculated hash did not match request hash.");
                 }
             }
         }
