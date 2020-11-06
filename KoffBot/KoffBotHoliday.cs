@@ -24,12 +24,8 @@ namespace KoffBot
             var finnishHolidaysEndpoint = "http://www.webcal.fi/cal.php?id=1&format=json&start_year=current_year&end_year=current_year&tz=Europe%2FHelsinki";
             var response = await client.GetAsync(finnishHolidaysEndpoint);
             var json = await response.Content.ReadAsStringAsync();
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-            };
 
-            var holidays = JsonSerializer.Deserialize<List<HolidayDTO>>(json, options);
+            var holidays = JsonSerializer.Deserialize<List<HolidayDTO>>(json, Shared.JsonDeserializerOptions);
             foreach (var holiday in holidays)
             {
                 if (DateTime.Today == holiday.Date)
@@ -48,15 +44,14 @@ namespace KoffBot
 
         private static string ResolveHolidayMessage(HolidayDTO holiday)
         {
-            switch (holiday.Name)
+            return holiday.Name switch
             {
-                case "Pyhäinpäivä":
-                    return "Huuuuuuuuu! :ghost: Hyvää Halloweenia! Muistakaa korkata (vähintään) yksi Koff!";
-                case "Suomen itsenäisyyspäivä":
-                    return "Hyvää itsenäisyyspäivää! Perhe, isänmaa ja Koff! :koff:";
-                default: 
-                    return null;
-            }
+                "Uudenvuodenpäivä" => "Hyvää uuttavuotta! Eilen taisi mennä muutama Koff! :koff: Uuteen nousuun? Koff!",
+                "Pyhäinpäivä" => "Huuuuuuuuu! :ghost: Hyvää Halloweenia! Muistakaa korkata (vähintään) yksi Koff!",
+                "Suomen itsenäisyyspäivä" => "Hyvää itsenäisyyspäivää! Perhe, isänmaa ja Koff! :koff:",
+                "Joulupäivä" => "Hyvää ja onnellista joulua toivottaa KoffBot! :santa: :koff:",
+                _ => null
+            };
         }
     }
 }
