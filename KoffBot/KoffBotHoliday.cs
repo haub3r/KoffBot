@@ -46,10 +46,17 @@ namespace KoffBot
         {
             return holiday.Name switch
             {
-                "Uudenvuodenpäivä" => "Hyvää uuttavuotta! Eilen taisi mennä muutama Koff! :koff: Uuteen nousuun? Koff!",
+                "Palmusunnuntai" => "Tänään tulee virpojia! Tarjotkaa siis kaikille ovella kävijöille ainakin yksi Koff! :koff: (KoffBot ei vastaa alkoholilain pykälän 90§ kohdasta 2 aiheutuvista seurauksista jos henkilö/henkilöt keille virvoitusjuomaa [Oluttuote: Sinebrychoff - Koff] tarjotaan ovat alaikäisiä ja/tai alkoholiriippuvaisia)",
+                "Pitkäperjantai" => "Hyvää pitkäperjantaita! Kristus uhrautui jotta saisimme yhden vapaapäivän lisää! :buddy-jesus: Koff!",
+                "Pääsiäissunnuntai" => "Pääsiäinen! Jeesus on ylösnoussut! Käy siis korkkaamassa Hänen kanssaan yksi Koff! :koff: Mutta älä kerro Hänen faijalleen :shushing_face: :koff:",
+                "Vappu" => "Työläisten päivä eli vappu! Ota siis sen kunniaksi ainakin yksi Koff! (Sinebrychoff ei tunnista vappua kansalliseksi juhlapäiväksi eikä päivän nimellinen merkitys oikeuta työntekijää pitämään vapaapäivää. Poissaolo päivän aikana lasketaan työsopimuksen vastaiseksi ja voi johtaa työntekijän välittömään irtisanomiseen työtehtävistä. Tämän viestin lukeminen ei oikeuta työntekijää pitämään taukoa.)",
+                "Helatorstai" => "Hyvää helatorstaita! Tällä päivällä ei ole mitään merkitystä, kuten ei sinullakaan! Aika avata yksi Koff? :koff:",
+                "Helluntai" => "Hyvää helluntaita! Päivä jolloin vuodatettiin Pyhää Henkeä! Tarvitseeko tähän kirjoittaa enempää? :koff: :koff: :koff:",
                 "Pyhäinpäivä" => "Huuuuuuuuu! :ghost: Hyvää Halloweenia! Muistakaa korkata (vähintään) yksi Koff!",
+                "Juhannus" => "Hyvää juhannusta! :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff:",
                 "Suomen itsenäisyyspäivä" => "Hyvää itsenäisyyspäivää! Perhe, isänmaa ja Koff! :koff:",
                 "Joulupäivä" => "Hyvää ja onnellista joulua toivottaa KoffBot! :santa: :koff:",
+                "Uudenvuodenpäivä" => "Hyvää uuttavuotta! Eilen taisi mennä muutama Koff! :koff: Uuteen nousuun? Koff!",
                 _ => null
             };
         }
