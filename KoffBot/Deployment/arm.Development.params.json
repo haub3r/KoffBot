@@ -1,0 +1,34 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "global": {
+      "value": {
+        "customerName": "KoffBot",
+        "location": "northeurope",
+        "environment": "Development"
+      }
+    },
+    "webAppSku": {
+      "value": {
+        "name": "S1",
+        "tier": "Standard",
+        "size": "S1",
+        "family": "S",
+        "capacity": 1
+      }
+    },
+    "baseNames": {
+      "value": {
+        "appInsights": "koffbot-dev",
+        "storage": "storageaccountkoffb843f",
+        "funcApp": "koffbot-dev",
+        "funcAppPlan": "ASP-KoffBotDev-b443",
+        "keyVault": "koffbot-dev-kv"
+      }
+    },
+    "developerObjectId": {
+      "value": "77c37c8b-910c-4efd-a4d2-57b7729e444b"
+    }
+  }
+}
