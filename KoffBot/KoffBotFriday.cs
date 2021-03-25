@@ -4,6 +4,8 @@ using Microsoft.Extensions.Logging;
 using System.Net.Http;
 using System.Text;
 using System;
+using System.Data.SqlClient;
+using Microsoft.AspNetCore.Mvc;
 
 namespace KoffBot
 {
@@ -18,6 +20,7 @@ namespace KoffBot
         {
             log.LogInformation("KoffBot activated. Ready to hail friday.");
 
+            // Send message to Slack channel.
             var client = new HttpClient();
             Random random = new Random();
             int randomIndex = random.Next(0, Messages.FridayPossibilities.Length);
@@ -26,6 +29,26 @@ namespace KoffBot
                 Content = new StringContent("{\"text\": \"" + Messages.FridayPossibilities[randomIndex] + "\" }", Encoding.UTF8, "application/json")
             };
             await client.SendAsync(content);
+
+            // Log the friday.
+            try
+            {
+                var connectionString = Environment.GetEnvironmentVariable("DbConnectionString");
+                using SqlConnection conn = new SqlConnection(connectionString);
+
+                conn.Open();
+                var sql = $@"INSERT INTO LogFriday (Created, CreatedBy, Modified, ModifiedBy)
+                             VALUES (CURRENT_TIMESTAMP, 'KoffBotFriday', CURRENT_TIMESTAMP, 'KoffBotFriday')";
+
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    var rows = await cmd.ExecuteNonQueryAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                log.LogError("Saving into friday log failed.", e);
+            }
         }
     }
 }
