@@ -42,7 +42,7 @@ namespace KoffBot
 
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
-                    var rows = await cmd.ExecuteNonQueryAsync();
+                    await cmd.ExecuteNonQueryAsync();
                 }
             }
             catch (Exception e)
