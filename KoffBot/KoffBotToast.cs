@@ -45,7 +45,7 @@ namespace KoffBot
 
                 rows.Close();
 
-                if (lastDate < lastDate.AddHours(1))
+                if (DateTime.UtcNow < lastDate.AddHours(1))
                 {
                     drunkMode = true;
                 }
