@@ -26,7 +26,9 @@ namespace KoffBot
                 using SqlConnection conn = new SqlConnection(connectionString);
 
                 conn.Open();
-                var sql = $@"SELECT COUNT(0) as ToastCount, (SELECT COUNT(0) FROM LogFriday) as FridayCount FROM LogToast";
+                var sql = $@"SELECT (SELECT COUNT(0) FROM LogToast) as ToastCount, 
+                                    (SELECT COUNT(0) FROM LogFriday) as FridayCount,
+                                    (SELECT COUNT(0) FROM LogDrunk) as DrunkCount";
 
                 using SqlCommand cmd = new SqlCommand(sql, conn);
                 var rows = await cmd.ExecuteReaderAsync();
@@ -34,6 +36,7 @@ namespace KoffBot
                 {
                     result.ToastCount = Convert.ToInt32(rows[0]);
                     result.FridayCount = Convert.ToInt32(rows[1]);
+                    result.DrunkCount = Convert.ToInt32(rows[2]);
                 }
 
                 rows.Close();
@@ -43,11 +46,7 @@ namespace KoffBot
             catch (Exception e)
             {
                 log.LogError("Getting the stats failed.", e);
-                var result = new ObjectResult("Getting the stats failed.")
-                {
-                    StatusCode = StatusCodes.Status500InternalServerError
-                };
-                return result;
+                throw;
             }
         }
     }
