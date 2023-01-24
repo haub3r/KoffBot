@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace KoffBot;
 
-namespace KoffBot
+public class SlackMessageDTO
 {
-    public class SlackMessageDTO
-    {
-        public string text { get; set; }
-    }
+    public string text { get; set; }
 }
