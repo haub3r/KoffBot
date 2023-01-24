@@ -21,24 +21,25 @@ public static class KoffBotPrice
     [FunctionName("KoffBotPrice")]
     public static async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
-        ILogger log)
+        ILogger logger)
     {
-        log.LogInformation("KoffBot activated. Ready to fetch perfect prices.");
+        logger.LogInformation("KoffBot activated. Ready to fetch perfect prices.");
 #if !DEBUG
-        await AuthenticationService.Authenticate(req, log);
+        await AuthenticationService.Authenticate(req, logger);
 #endif
         // Get data from Alko.
         try
         {
-            using (var webClient = new WebClient())
+            using (var httpClient = new HttpClient())
             {
                 var url = "https://www.alko.fi/INTERSHOP/static/WFS/Alko-OnlineShop-Site/-/Alko-OnlineShop/fi_FI/Alkon%20Hinnasto%20Tekstitiedostona/alkon-hinnasto-tekstitiedostona.xlsx";
-                webClient.DownloadFile(url, Path.GetTempPath() + "\\" + "alkon-hinnasto-tekstitiedostona.xlsx");
+                byte[] fileBytes = await httpClient.GetByteArrayAsync(url);
+                File.WriteAllBytes($"{Path.GetTempPath()}\\alkon-hinnasto-tekstitiedostona.xlsx", fileBytes);
             }
         }
         catch (Exception e)
         {
-            log.LogError("Getting data from Alko failed.", e);
+            logger.LogError("Getting data from Alko failed.", e);
             var result = new ObjectResult("Getting data from Alko failed.")
             {
                 StatusCode = StatusCodes.Status500InternalServerError
@@ -47,9 +48,33 @@ public static class KoffBotPrice
         }
 
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-        using var package = new ExcelPackage(new FileInfo(Path.GetTempPath() + "\\" + "alkon-hinnasto-tekstitiedostona.xlsx"));
+        using var package = new ExcelPackage(new FileInfo($"{Path.GetTempPath()}\\alkon-hinnasto-tekstitiedostona.xlsx"));
 
         // Search for current price.
+        var price = SearchCurrentPrice(package);
+
+        // Handle price in DB.
+        (string lastPrice, bool firstRunToday) = await HandleDbOperations(logger, price);
+
+        // Determine message.
+        var message = DetermineMessage(price, lastPrice, firstRunToday);
+
+        // Send message to Slack channel.
+        var json = @"{""text"":""Koff-tölkin hinta tänään: " + price + "€\n" + "Edellisen tarkistuksen aikainen hinta: " + lastPrice + "€\n\n" + message + @"""}";
+        using (var httpClient = new HttpClient())
+        {
+            var content = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())
+            {
+                Content = new StringContent(json, Encoding.UTF8, "application/json")
+            };
+            await httpClient.SendAsync(content);
+        }
+
+        return new OkResult();
+    }
+
+    private static string SearchCurrentPrice(ExcelPackage package)
+    {
         var firstSheet = package.Workbook.Worksheets.First();
 
         var koffCell =
@@ -85,9 +110,13 @@ public static class KoffBotPrice
             }
         }
 
-        // Handle price in DB.
+        return price;
+    }
+
+    private async static Task<(string, bool)> HandleDbOperations(ILogger log, string price)
+    {
         var lastPrice = "";
-        var firstTriggeringToday = false;
+        var firstRunToday = false;
         try
         {
             var connectionString = Environment.GetEnvironmentVariable("DbConnectionString");
@@ -109,7 +138,7 @@ public static class KoffBotPrice
 
             if (lastDate.Date < DateTime.Today)
             {
-                firstTriggeringToday = true;
+                firstRunToday = true;
                 var sqlSave = $@"INSERT INTO LogPrice (Amount, Created, CreatedBy, Modified, ModifiedBy)
                              VALUES ({price}, CURRENT_TIMESTAMP, 'KoffBotPrice', CURRENT_TIMESTAMP, 'KoffBotPrice')";
 
@@ -122,45 +151,33 @@ public static class KoffBotPrice
         catch (Exception e)
         {
             log.LogError("Getting the last price failed.", e);
-            var result = new ObjectResult("Getting the last price failed.")
-            {
-                StatusCode = StatusCodes.Status500InternalServerError
-            };
-            return result;
         }
 
-        // Determine message.
+        return (lastPrice, firstRunToday);
+    }
+    
+    private static string DetermineMessage(string price, string lastPrice, bool firstRunToday)
+    {
         var priceAsDec = Convert.ToDecimal(price, CultureInfo.InvariantCulture);
         var lastPriceAsDec = Convert.ToDecimal(lastPrice, CultureInfo.InvariantCulture);
-        var historyMessage = "";
-        if (!firstTriggeringToday)
+        string message;
+        if (!firstRunToday)
         {
-            historyMessage = "Tarkistit jo hinnan aikaisemmin tänään! Sinulla on selvästi jano, miten olisi yksi Koff? :koff:";
+            message = "Tarkistit jo hinnan aikaisemmin tänään! Sinulla on selvästi jano, miten olisi yksi Koff? :koff:";
         }
         else if (priceAsDec < lastPriceAsDec)
         {
-            historyMessage = "Nyt on siis entistä helpompaa ottaa yksi Koff! :koff:";
+            message = "Nyt on siis entistä helpompaa ottaa yksi Koff! :koff:";
         }
         else if (priceAsDec > lastPriceAsDec)
         {
-            historyMessage = "Mutta se ei haittaa, hinta on laadun merkki! :koff:";
+            message = "Mutta se ei haittaa, hinta on laadun merkki! :koff:";
         }
         else
         {
-            historyMessage = "Samaan hintaan kuin aina! :koff:";
+            message = "Samaan hintaan kuin aina! :koff:";
         }
 
-        // Send message to Slack channel.
-        var message = @"{""text"":""Koff-tölkin hinta tänään: " + price + "€\n" + "Eilisen hinta: " + lastPrice + "€\n\n" + historyMessage + @"""}";
-        using (var httpClient = new HttpClient())
-        {
-            var content = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())
-            {
-                Content = new StringContent(message, Encoding.UTF8, "application/json")
-            };
-            await httpClient.SendAsync(content);
-        }
-
-        return new OkResult();
+        return message;
     }
 }
