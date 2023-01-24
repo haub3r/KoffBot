@@ -11,6 +11,7 @@ namespace KoffBot;
 
 public static class KoffBotHoliday
 {
+    [Disable]
     [FunctionName("KoffBotHoliday")]
 #if DEBUG
     public static async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer, ILogger log)
