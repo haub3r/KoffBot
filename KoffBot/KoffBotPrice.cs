@@ -13,6 +13,7 @@ using OfficeOpenXml;
 using System.IO;
 using System.Linq;
 using System.Globalization;
+using System.Text.Json;
 
 namespace KoffBot;
 
@@ -60,12 +61,16 @@ public static class KoffBotPrice
         var message = DetermineMessage(price, lastPrice, firstRunToday);
 
         // Send message to Slack channel.
-        var json = @"{""text"":""Koff-tölkin hinta tänään: " + price + "€\n" + "Edellisen tarkistuksen aikainen hinta: " + lastPrice + "€\n\n" + message + @"""}";
+        var dto = new PriceSlackMessageDTO
+        {
+            Text = $"Koff-tölkin hinta tänään: {price}€{Environment.NewLine}Edellisen tarkistuksen aikainen hinta: {lastPrice}€{Environment.NewLine}{Environment.NewLine}{message}"
+        };
+
         using (var httpClient = new HttpClient())
         {
             var content = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())
             {
-                Content = new StringContent(json, Encoding.UTF8, "application/json")
+                Content = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json")
             };
             await httpClient.SendAsync(content);
         }

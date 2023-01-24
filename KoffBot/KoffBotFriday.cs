@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System;
 using System.Data.SqlClient;
+using System.Text.Json;
 
 namespace KoffBot;
 
@@ -23,9 +24,14 @@ public static class KoffBotFriday
         var client = new HttpClient();
         Random random = new Random();
         int randomIndex = random.Next(0, Messages.FridayPossibilities.Length);
+        var dto = new FridaySlackMessageDTO
+        {
+            Text = Messages.FridayPossibilities[randomIndex]
+        };
+
         var content = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())
         {
-            Content = new StringContent("{\"text\": \"" + Messages.FridayPossibilities[randomIndex] + "\" }", Encoding.UTF8, "application/json")
+            Content = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json")
         };
         await client.SendAsync(content);
 

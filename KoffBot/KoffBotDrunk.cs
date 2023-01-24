@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Text;
 using System;
 using System.Data.SqlClient;
+using System.Text.Json;
 
 namespace KoffBot;
 
@@ -24,9 +25,14 @@ public static class KoffBotDrunk
 #endif
         // Send message to Slack channel.
         var client = new HttpClient();
+        var dto = new DrunkSlackMessageDTO
+        {
+            Text = "KoffBot drank some delicious Koff beer and is now in 'Drunk Mode' for the next hour. Toasting will be difficult."
+        };
+
         var content = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())
         {
-            Content = new StringContent("{\"text\": \"KoffBot drank some delicious Koff beer and is now on 'Drunk Mode' for the next hour. Toasting will be difficult.\" }", Encoding.UTF8, "application/json")
+            Content = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json")
         };
         await client.SendAsync(content);
 

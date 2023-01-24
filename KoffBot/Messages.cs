@@ -18,6 +18,7 @@ public static class Messages
         "Perjantai, eli: :koff: K :koff: O :koff: F :koff: F :koff:",
         "Perjantai! Onko se aftereille, keikalle vai yökerholle? Sen kaiken kertoo :koff:",
         "Perjantai! :koff: Perjantai! :koff: Perjantai!!! :koff: :koff: :koff:",
-        "Onko taas mennyt liian vähän kaljaa? Älä sure, tänään on perjantai! Koff! :koff:"
+        "Onko taas mennyt liian vähän kaljaa? Älä sure, tänään on perjantai! Koff! :koff:",
+        "Perjantain olutarvostelu: Karhu - :nauseated_face: --- Koff - :star-struck"
     };
 }

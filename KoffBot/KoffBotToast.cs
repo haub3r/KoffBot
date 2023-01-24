@@ -61,14 +61,14 @@ public static class KoffBotToast
         }
 
         // Send message to Slack channel.
-        var message = new SlackMessageDTO()
+        var message = new ToastSlackMessageDTO()
         {
-            text = "Koff!"
+            Text = "Koff!"
         };
 
         if (drunkMode)
         {
-            message.text = ScrambleWord(message.text);
+            message.Text = ScrambleWord(message.Text);
         }
 
         var client = new HttpClient();

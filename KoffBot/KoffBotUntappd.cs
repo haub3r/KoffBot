@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
 using System.Text;
+using System;
+using System.Text.Json;
 
 namespace KoffBot;
 
@@ -21,9 +23,14 @@ public static class KoffBotUntappd
         await AuthenticationService.Authenticate(req, log);
 #endif            
         var client = new HttpClient();
+        var dto = new UntappdSlackMessageDTO
+        {
+            Text = $"Muista, että voit arvostella Koffin Untappd-sovelluksessa. Sovelluksen saa osoitteesta: www.untappd.com. Annathan Koffille viisi tähteä :koff:"
+        };
+
         var content = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())
         {
-            Content = new StringContent("{\"text\": \"Muista, että voit arvostella Koffin Untappd-sovelluksessa. Sovelluksen saa osoitteesta: www.untappd.com. Annathan Koffille viisi tähteä :koff:\" }", Encoding.UTF8, "application/json")
+            Content = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json")
         };
         await client.SendAsync(content);
 
