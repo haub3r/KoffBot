@@ -19,12 +19,16 @@ public static class KoffBotToast
     [FunctionName("KoffBotToast")]
     public static async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
-        ILogger log)
+        ILogger logger)
     {
-        log.LogInformation("KoffBot activated. Ready for furious toasting.");
-#if !DEBUG
-        await AuthenticationService.Authenticate(req, log);
-#endif
+        logger.LogInformation("KoffBot activated. Ready for furious toasting.");
+
+        var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
+        if (env != Shared.LocalEnvironmentName)
+        {
+            await AuthenticationService.Authenticate(req, logger);
+        }
+
         // Check if in "Drunk Mode".
         var drunkMode = false;
         try
@@ -52,7 +56,7 @@ public static class KoffBotToast
         }
         catch (Exception e)
         {
-            log.LogError("Reading from drunkedness log failed.", e);
+            logger.LogError("Reading from drunkedness log failed.", e);
             var result = new ObjectResult("Reading from drunkedness log failed.")
             {
                 StatusCode = StatusCodes.Status500InternalServerError
@@ -95,7 +99,7 @@ public static class KoffBotToast
         }
         catch (Exception e)
         {
-            log.LogError("Saving into toasting log failed.", e);
+            logger.LogError("Saving into toasting log failed.", e);
             var result = new ObjectResult("Saving into toasting log failed.")
             {
                 StatusCode = StatusCodes.Status500InternalServerError
@@ -108,7 +112,8 @@ public static class KoffBotToast
 
     private static string ScrambleWord(string str)
     {
-        var rand = new Random(); var list = new SortedList<int, char>();
+        var rand = new Random(); 
+        var list = new SortedList<int, char>();
         foreach (var c in str)
             list.Add(rand.Next(), c);
         

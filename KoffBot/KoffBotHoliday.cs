@@ -11,6 +11,7 @@ namespace KoffBot;
 
 public static class KoffBotHoliday
 {
+    // Function is disabled because the holiday API became subscription-based.
     [Disable]
     [FunctionName("KoffBotHoliday")]
 #if DEBUG

@@ -16,12 +16,16 @@ public static class KoffBotUntappd
     [FunctionName("KoffBotUntappd")]
     public static async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
-        ILogger log)
+        ILogger logger)
     {
-        log.LogInformation("KoffBot activated. Ready to advertise untappd.");
-#if !DEBUG
-        await AuthenticationService.Authenticate(req, log);
-#endif            
+        logger.LogInformation("KoffBot activated. Ready to advertise untappd.");
+
+        var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
+        if (env != Shared.LocalEnvironmentName)
+        {
+            await AuthenticationService.Authenticate(req, logger);
+        }
+
         var client = new HttpClient();
         var dto = new UntappdSlackMessageDTO
         {

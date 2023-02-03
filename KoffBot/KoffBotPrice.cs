@@ -8,7 +8,6 @@ using System.Net.Http;
 using System.Text;
 using System;
 using System.Data.SqlClient;
-using System.Net;
 using OfficeOpenXml;
 using System.IO;
 using System.Linq;
@@ -25,9 +24,20 @@ public static class KoffBotPrice
         ILogger logger)
     {
         logger.LogInformation("KoffBot activated. Ready to fetch perfect prices.");
-#if !DEBUG
-        await AuthenticationService.Authenticate(req, logger);
-#endif
+
+        var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
+        if (env != Shared.LocalEnvironmentName)
+        {
+            await AuthenticationService.Authenticate(req, logger);
+        }
+
+        // Run without awaiting to avoid Slack errors to users.
+        Task<ObjectResult> task = Task.Run(() => GetKoffPrice(logger));
+        return new OkResult();
+    }
+
+    private static async Task<ObjectResult> GetKoffPrice(ILogger logger)
+    {
         // Get data from Alko.
         try
         {
@@ -75,7 +85,7 @@ public static class KoffBotPrice
             await httpClient.SendAsync(content);
         }
 
-        return new OkResult();
+        return new OkObjectResult(null);
     }
 
     private static string SearchCurrentPrice(ExcelPackage package)

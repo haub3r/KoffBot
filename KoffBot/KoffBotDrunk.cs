@@ -17,12 +17,16 @@ public static class KoffBotDrunk
     [FunctionName("KoffBotDrunk")]
     public static async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req,
-        ILogger log)
+        ILogger logger)
     {
-        log.LogInformation("KoffBot activated. Ready to get rip-roaring drunk.");
-#if !DEBUG
-        await AuthenticationService.Authenticate(req, log);
-#endif
+        logger.LogInformation("KoffBot activated. Ready to get rip-roaring drunk.");
+        
+        var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
+        if (env != Shared.LocalEnvironmentName)
+        {
+            await AuthenticationService.Authenticate(req, logger);
+        }
+
         // Send message to Slack channel.
         var client = new HttpClient();
         var dto = new DrunkSlackMessageDTO
@@ -53,7 +57,7 @@ public static class KoffBotDrunk
         }
         catch (Exception e)
         {
-            log.LogError("Saving into drunkedness log failed.", e);
+            logger.LogError("Saving into drunkedness log failed.", e);
             var result = new ObjectResult("Saving into drunkedness log failed.")
             {
                 StatusCode = StatusCodes.Status500InternalServerError
