@@ -39,9 +39,9 @@ public static class KoffBotPrice
     private static async Task<ObjectResult> GetKoffPrice(ILogger logger)
     {
         // Get data from Alko.
+        using var httpClient = new HttpClient();
         try
         {
-            using (var httpClient = new HttpClient())
             {
                 var url = "https://www.alko.fi/INTERSHOP/static/WFS/Alko-OnlineShop-Site/-/Alko-OnlineShop/fi_FI/Alkon%20Hinnasto%20Tekstitiedostona/alkon-hinnasto-tekstitiedostona.xlsx";
                 byte[] fileBytes = await httpClient.GetByteArrayAsync(url);
@@ -76,14 +76,11 @@ public static class KoffBotPrice
             Text = $"Koff-tölkin hinta tänään: {price}€{Environment.NewLine}Edellisen tarkistuksen aikainen hinta: {lastPrice}€{Environment.NewLine}{Environment.NewLine}{message}"
         };
 
-        using (var httpClient = new HttpClient())
+        var content = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())
         {
-            var content = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())
-            {
-                Content = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json")
-            };
-            await httpClient.SendAsync(content);
-        }
+            Content = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json")
+        };
+        await httpClient.SendAsync(content);
 
         return new OkObjectResult(null);
     }
