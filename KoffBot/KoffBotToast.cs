@@ -75,12 +75,12 @@ public static class KoffBotToast
             message.Text = ScrambleWord(message.Text);
         }
 
-        var client = new HttpClient();
+        using var httpClient = new HttpClient();
         var content = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())
         {
             Content = new StringContent(JsonSerializer.Serialize(message), Encoding.UTF8, "application/json")
         };
-        await client.SendAsync(content);
+        await httpClient.SendAsync(content);
 
         // Log the toasting.
         try

@@ -21,7 +21,8 @@ public static class KoffBotFriday
         log.LogInformation("KoffBot activated. Ready to hail friday.");
 
         // Send message to Slack channel.
-        var client = new HttpClient();
+        using var httpClient = new HttpClient();
+
         Random random = new Random();
         int randomIndex = random.Next(0, Messages.FridayPossibilities.Length);
         var dto = new FridaySlackMessageDTO
@@ -33,7 +34,7 @@ public static class KoffBotFriday
         {
             Content = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json")
         };
-        await client.SendAsync(content);
+        await httpClient.SendAsync(content);
 
         // Log the friday.
         try

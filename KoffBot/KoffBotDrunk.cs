@@ -28,7 +28,7 @@ public static class KoffBotDrunk
         }
 
         // Send message to Slack channel.
-        var client = new HttpClient();
+        using var httpClient = new HttpClient();
         var dto = new DrunkSlackMessageDTO
         {
             Text = "KoffBot drank some delicious Koff beer and is now in 'Drunk Mode' for the next hour. Toasting will be difficult."
@@ -38,7 +38,7 @@ public static class KoffBotDrunk
         {
             Content = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json")
         };
-        await client.SendAsync(content);
+        await httpClient.SendAsync(content);
 
         // Log the drunkedness.
         try

@@ -26,7 +26,7 @@ public static class KoffBotUntappd
             await AuthenticationService.Authenticate(req, logger);
         }
 
-        var client = new HttpClient();
+        using var httpClient = new HttpClient();
         var dto = new UntappdSlackMessageDTO
         {
             Text = $"Muista, että voit arvostella Koffin Untappd-sovelluksessa. Sovelluksen saa osoitteesta: www.untappd.com. Annathan Koffille viisi tähteä :koff:"
@@ -36,7 +36,7 @@ public static class KoffBotUntappd
         {
             Content = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json")
         };
-        await client.SendAsync(content);
+        await httpClient.SendAsync(content);
 
         return new OkResult();
     }
