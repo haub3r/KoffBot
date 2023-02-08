@@ -43,7 +43,7 @@ public static class KoffBotAdvertisement
             {
                 MaxTokens = 150,
                 Model = "text-davinci-002",
-                Prompt = "Write an advertisement about beer that is named \"Koff\" in Finnish language.",
+                Prompt = "Write an advertisement about beer that is named Koff in Finnish language.",
                 Temperature = 0.6
             };
             var aiRequest = new HttpRequestMessage(HttpMethod.Post, "https://api.openai.com/v1/completions")

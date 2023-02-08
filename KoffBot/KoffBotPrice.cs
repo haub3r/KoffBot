@@ -42,11 +42,9 @@ public static class KoffBotPrice
         using var httpClient = new HttpClient();
         try
         {
-            {
-                var url = "https://www.alko.fi/INTERSHOP/static/WFS/Alko-OnlineShop-Site/-/Alko-OnlineShop/fi_FI/Alkon%20Hinnasto%20Tekstitiedostona/alkon-hinnasto-tekstitiedostona.xlsx";
-                byte[] fileBytes = await httpClient.GetByteArrayAsync(url);
-                File.WriteAllBytes($"{Path.GetTempPath()}\\alkon-hinnasto-tekstitiedostona.xlsx", fileBytes);
-            }
+            var url = "https://www.alko.fi/INTERSHOP/static/WFS/Alko-OnlineShop-Site/-/Alko-OnlineShop/fi_FI/Alkon%20Hinnasto%20Tekstitiedostona/alkon-hinnasto-tekstitiedostona.xlsx";
+            byte[] fileBytes = await httpClient.GetByteArrayAsync(url);
+            File.WriteAllBytes($"{Path.GetTempPath()}\\alkon-hinnasto-tekstitiedostona.xlsx", fileBytes);
         }
         catch (Exception e)
         {

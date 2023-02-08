@@ -22,7 +22,6 @@ public static class KoffBotToast
         ILogger logger)
     {
         logger.LogInformation("KoffBot activated. Ready for furious toasting.");
-
         var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
         if (env != Shared.LocalEnvironmentName)
         {
