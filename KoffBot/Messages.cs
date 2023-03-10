@@ -24,15 +24,17 @@ public static class Messages
 
     public static string[] FridayPossibilitiesWinter = new string[]
     {
-        "Talvi on kylmä ja synkkä. Piristä mieltäsi ottamalla Koff! :koff:",
+        "Talvi on synkkä ja kylmä. Piristä mieltäsi ottamalla Koff! :koff:",
         "Ulkona on pimeää :new_moon_with_face: Koff tuo valoa tähänkin perjantaihin (ja elämään)! :koff:",
-        "Paras lämmike talven kylmyyteen: ~Jallu~ Koff!"
+        "Paras lämmike talven kylmyyteen: ~Jallu~ Koff!",
+        "Perjantai! Lumen keskellä on hyvä ottaa Koff! Mutta älä sammu sinne pää edellä! :skull_and_crossbones:"
     };
 
     public static string[] FridayPossibilitiesSummer = new string[]
     {
         "Perjantai! Aurinko paistaa, uimarannat ovat täyttyvät ja janon sammuttaa :koff: :koff: :koff: :koff: :koff:",
         "Helteillä auttaa jääkylmä Koff! Nyt on perjantai, mikset ole jo korkannut?",
-        "Paras virvoike kesän kuumuuteen: ~Lonkero~ Koff!"
+        "Paras virvoike kesän kuumuuteen: ~Lonkero~ Koff!",
+        "Perjantai! Helteisiin on taas kuollut ihmisiä, pysykää nesteytettynä! Mikä siihen parempi tapa kuin ottaa janon sammuttava Koff!"
     };
 }
