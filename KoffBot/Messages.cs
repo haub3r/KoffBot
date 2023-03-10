@@ -19,6 +19,6 @@ public static class Messages
         "Perjantai! Onko se aftereille, keikalle vai yökerholle? Sen kaiken kertoo :koff:",
         "Perjantai! :koff: Perjantai! :koff: Perjantai!!! :koff: :koff: :koff:",
         "Onko taas mennyt liian vähän kaljaa? Älä sure, tänään on perjantai! Koff! :koff:",
-        "Perjantain olutarvostelu: Karhu - :nauseated_face: --- Koff - :star-struck"
+        "Perjantain olutarvostelu: Karhu - 1/10 :nauseated_face: --- Koff - 10/10 :star-struck:"
     };
 }
