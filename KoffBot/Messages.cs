@@ -21,4 +21,18 @@ public static class Messages
         "Onko taas mennyt liian vähän kaljaa? Älä sure, tänään on perjantai! Koff! :koff:",
         "Perjantain olutarvostelu: Karhu - 1/10 :nauseated_face: --- Koff - 10/10 :star-struck:"
     };
+
+    public static string[] FridayPossibilitiesWinter = new string[]
+    {
+        "Talvi on kylmä ja synkkä. Piristä mieltäsi ottamalla Koff! :koff:",
+        "Ulkona on pimeää :new_moon_with_face: Koff tuo valoa tähänkin perjantaihin (ja elämään)! :koff:",
+        "Paras lämmike talven kylmyyteen: ~Jallu~ Koff!"
+    };
+
+    public static string[] FridayPossibilitiesSummer = new string[]
+    {
+        "Perjantai! Aurinko paistaa, uimarannat ovat täyttyvät ja janon sammuttaa :koff: :koff: :koff: :koff: :koff:",
+        "Helteillä auttaa jääkylmä Koff! Nyt on perjantai, mikset ole jo korkannut?",
+        "Paras virvoike kesän kuumuuteen: ~Lonkero~ Koff!"
+    };
 }

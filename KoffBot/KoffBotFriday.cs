@@ -6,6 +6,8 @@ using System.Text;
 using System;
 using System.Data.SqlClient;
 using System.Text.Json;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace KoffBot;
 
@@ -23,8 +25,24 @@ public static class KoffBotFriday
         // Send message to Slack channel.
         using var httpClient = new HttpClient();
 
+        var messages = Messages.FridayPossibilities;
+
+        // Add season specific messages to message pool.
+        if (DateTime.Now.Month >= 11 || DateTime.Now.Month <= 3)
+        {
+            messages.Concat(Messages.FridayPossibilitiesWinter);
+        }
+
+        if (DateTime.Now.Month == 6 
+            || DateTime.Now.Month == 7
+            || DateTime.Now.Month == 8
+            || DateTime.Now.Month == 9)
+        {
+            messages.Concat(Messages.FridayPossibilitiesSummer);
+        }
+
         Random random = new Random();
-        int randomIndex = random.Next(0, Messages.FridayPossibilities.Length);
+        int randomIndex = random.Next(0, messages.Length);
         var dto = new FridaySlackMessageDTO
         {
             Text = Messages.FridayPossibilities[randomIndex]
