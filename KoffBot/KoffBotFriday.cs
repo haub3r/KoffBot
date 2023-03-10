@@ -30,7 +30,7 @@ public static class KoffBotFriday
         // Add season specific messages to message pool.
         if (DateTime.Now.Month >= 11 || DateTime.Now.Month <= 3)
         {
-            messages.Concat(Messages.FridayPossibilitiesWinter);
+            messages = messages.Concat(Messages.FridayPossibilitiesWinter).ToArray();
         }
 
         if (DateTime.Now.Month == 6 
@@ -38,7 +38,7 @@ public static class KoffBotFriday
             || DateTime.Now.Month == 8
             || DateTime.Now.Month == 9)
         {
-            messages.Concat(Messages.FridayPossibilitiesSummer);
+            messages = messages.Concat(Messages.FridayPossibilitiesSummer).ToArray();
         }
 
         Random random = new Random();
