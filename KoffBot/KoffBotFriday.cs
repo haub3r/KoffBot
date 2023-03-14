@@ -45,7 +45,7 @@ public static class KoffBotFriday
         int randomIndex = random.Next(0, messages.Length);
         var dto = new FridaySlackMessageDTO
         {
-            Text = Messages.FridayPossibilities[randomIndex]
+            Text = messages[randomIndex]
         };
 
         var content = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())
