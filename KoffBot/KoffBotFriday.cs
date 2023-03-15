@@ -23,7 +23,7 @@ public class KoffBotFriday
 #if DEBUG
     public async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer)
 #else
-    public async Task Run([TimerTrigger("0 1 0 * * 5")] TimerInfo myTimer, ILogger log)
+    public async Task Run([TimerTrigger("0 1 0 * * 5")] TimerInfo myTimer)
 #endif
     {
         _logger.LogInformation("KoffBot activated. Ready to hail friday.");

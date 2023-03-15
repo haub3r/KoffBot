@@ -21,15 +21,14 @@ public class KoffBotUntappd
 
     [Function("KoffBotUntappd")]
     public async Task<HttpResponseData> Run(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequestData req,
-        ILogger logger)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequestData req)
     {
-        logger.LogInformation("KoffBot activated. Ready to advertise untappd.");
+        _logger.LogInformation("KoffBot activated. Ready to advertise untappd.");
 
         var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
         if (env != Shared.LocalEnvironmentName)
         {
-            await AuthenticationService.Authenticate(req, logger);
+            await AuthenticationService.Authenticate(req, _logger);
         }
 
         using var httpClient = new HttpClient();
