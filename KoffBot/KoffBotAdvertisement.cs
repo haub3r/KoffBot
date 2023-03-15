@@ -1,38 +1,43 @@
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
-using System;
 using System.Text.Json;
-using System.Linq;
+using System.Threading.Tasks;
 
 namespace KoffBot;
 
-public static class KoffBotAdvertisement
+public class KoffBotAdvertisement
 {
-    [FunctionName("KoffBotAdvertisement")]
-    public static async Task<IActionResult> Run(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
-        ILogger logger)
+    private readonly ILogger _logger;
+
+    public KoffBotAdvertisement(ILoggerFactory loggerFactory)
     {
-        logger.LogInformation("KoffBot activated. Ready to advertise using AI.");
+        _logger = loggerFactory.CreateLogger<KoffBotAdvertisement>();
+    }
+
+    [Function("KoffBotAdvertisement")]
+    public async Task<HttpResponseData> Run(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequestData req)
+    {
+        _logger.LogInformation("KoffBot activated. Ready to advertise using AI.");
 
         var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
         if (env != Shared.LocalEnvironmentName)
         {
-            await AuthenticationService.Authenticate(req, logger);
+            await AuthenticationService.Authenticate(req, _logger);
         }
 
         // Run without awaiting to avoid Slack errors to users.
-        Task<ObjectResult> task = Task.Run(() => GetAiMessage(logger));
-        return new OkResult();
+        Task<HttpResponseData> task = Task.Run(() => GetAiMessage(_logger, req));
+        return req.CreateResponse(HttpStatusCode.OK);
     }
 
-    private static async Task<ObjectResult> GetAiMessage(ILogger logger)
+    private static async Task<HttpResponseData> GetAiMessage(ILogger logger, HttpRequestData req)
     {
         // Get message from OpenAI.
         using var httpClient = new HttpClient();
@@ -52,16 +57,15 @@ public static class KoffBotAdvertisement
             };
             aiRequest.Headers.Add("Authorization", Environment.GetEnvironmentVariable("OpenAiApiKey"));
             var response = await httpClient.SendAsync(aiRequest);
-            var parsed = await response.Content.ReadAsAsync<AiResponseDTO>();
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var parsed = JsonSerializer.Deserialize<AiResponseDTO>(responseContent);
             responseMessage = parsed.Choices.First().Text;
         }
         catch (Exception e)
         {
             logger.LogError("Getting data from OpenAI failed.", e);
-            var result = new ObjectResult("Getting data from OpenAI failed.")
-            {
-                StatusCode = StatusCodes.Status500InternalServerError
-            };
+            var result = req.CreateResponse(HttpStatusCode.InternalServerError);
+            result.WriteString("Getting data from OpenAI failed.");
             return result;
         }
 
@@ -77,6 +81,6 @@ public static class KoffBotAdvertisement
         };
         await httpClient.SendAsync(slackRequest);
 
-        return new OkObjectResult(null);
+        return req.CreateResponse(HttpStatusCode.OK);
     }
 }

@@ -1,30 +1,35 @@
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
-using System.Net.Http;
-using System.Text;
 using System;
 using System.Data.SqlClient;
+using System.Net;
+using System.Net.Http;
+using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace KoffBot;
 
-public static class KoffBotDrunk
+public class KoffBotDrunk
 {
-    [FunctionName("KoffBotDrunk")]
-    public static async Task<IActionResult> Run(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req,
-        ILogger logger)
+    private readonly ILogger _logger;
+
+    public KoffBotDrunk(ILoggerFactory loggerFactory)
     {
-        logger.LogInformation("KoffBot activated. Ready to get rip-roaring drunk.");
+        _logger = loggerFactory.CreateLogger<KoffBotDrunk>();
+    }
+
+    [Function("KoffBotDrunk")]
+    public async Task<HttpResponseData> Run(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequestData req)
+    {
+        _logger.LogInformation("KoffBot activated. Ready to get rip-roaring drunk.");
         
         var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
         if (env != Shared.LocalEnvironmentName)
         {
-            await AuthenticationService.Authenticate(req, logger);
+            await AuthenticationService.Authenticate(req, _logger);
         }
 
         // Send message to Slack channel.
@@ -57,14 +62,13 @@ public static class KoffBotDrunk
         }
         catch (Exception e)
         {
-            logger.LogError("Saving into drunkedness log failed.", e);
-            var result = new ObjectResult("Saving into drunkedness log failed.")
-            {
-                StatusCode = StatusCodes.Status500InternalServerError
-            };
+            _logger.LogError("Saving into drunkedness log failed.", e);
+            var result = req.CreateResponse(HttpStatusCode.OK);
+            result.WriteString("Saving into drunkedness log failed.");
+
             return result;
         }
 
-        return new OkResult();
+        return req.CreateResponse(HttpStatusCode.OK);
     }
 }

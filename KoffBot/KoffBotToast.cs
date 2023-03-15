@@ -1,31 +1,36 @@
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
-using System;
-using System.Data.SqlClient;
 using System.Text.Json;
-using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 
 namespace KoffBot;
 
-public static class KoffBotToast
+public class KoffBotToast
 {
-    [FunctionName("KoffBotToast")]
-    public static async Task<IActionResult> Run(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
-        ILogger logger)
+    private readonly ILogger _logger;
+
+    public KoffBotToast(ILoggerFactory loggerFactory)
     {
-        logger.LogInformation("KoffBot activated. Ready for furious toasting.");
+        _logger = loggerFactory.CreateLogger<KoffBotToast>();
+    }
+
+    [Function("KoffBotToast")]
+    public async Task<HttpResponseData> Run(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequestData req)
+    {
+        _logger.LogInformation("KoffBot activated. Ready for furious toasting.");
         var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
         if (env != Shared.LocalEnvironmentName)
         {
-            await AuthenticationService.Authenticate(req, logger);
+            await AuthenticationService.Authenticate(req, _logger);
         }
 
         // Check if in "Drunk Mode".
@@ -55,11 +60,10 @@ public static class KoffBotToast
         }
         catch (Exception e)
         {
-            logger.LogError("Reading from drunkedness log failed.", e);
-            var result = new ObjectResult("Reading from drunkedness log failed.")
-            {
-                StatusCode = StatusCodes.Status500InternalServerError
-            };
+            _logger.LogError("Reading from drunkedness log failed.", e);
+            var result = req.CreateResponse(HttpStatusCode.OK);
+            result.WriteString("Reading from drunkedness log failed.");
+
             return result;
         }
 
@@ -98,15 +102,14 @@ public static class KoffBotToast
         }
         catch (Exception e)
         {
-            logger.LogError("Saving into toasting log failed.", e);
-            var result = new ObjectResult("Saving into toasting log failed.")
-            {
-                StatusCode = StatusCodes.Status500InternalServerError
-            };
+            _logger.LogError("Saving into toasting log failed.", e);
+            var result = req.CreateResponse(HttpStatusCode.InternalServerError);
+            result.WriteString("Saving into toasting log failed.");
+
             return result;
         }
 
-        return new OkResult();
+        return req.CreateResponse(HttpStatusCode.OK);
     }
 
     private static string ScrambleWord(string str)

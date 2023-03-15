@@ -1,21 +1,27 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Net;
 using System.Net.Http;
 using System.Text;
-using System;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace KoffBot;
 
-public static class KoffBotUntappd
+public class KoffBotUntappd
 {
-    [FunctionName("KoffBotUntappd")]
-    public static async Task<IActionResult> Run(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
+    private readonly ILogger _logger;
+
+    public KoffBotUntappd(ILoggerFactory loggerFactory)
+    {
+        _logger = loggerFactory.CreateLogger<KoffBotUntappd>();
+    }
+
+    [Function("KoffBotUntappd")]
+    public async Task<HttpResponseData> Run(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequestData req,
         ILogger logger)
     {
         logger.LogInformation("KoffBot activated. Ready to advertise untappd.");
@@ -38,6 +44,6 @@ public static class KoffBotUntappd
         };
         await httpClient.SendAsync(content);
 
-        return new OkResult();
+        return req.CreateResponse(HttpStatusCode.OK);
     }
 }

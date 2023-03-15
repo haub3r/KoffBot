@@ -1,22 +1,27 @@
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Data.SqlClient;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace KoffBot;
 
-public static class KoffBotStats
+public class KoffBotStats
 {
-    [FunctionName("KoffBotStats")]
-    public static async Task<IActionResult> Run(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
-        ILogger log)
+    private readonly ILogger _logger;
+
+    public KoffBotStats(ILoggerFactory loggerFactory)
     {
-        log.LogInformation("KoffBot activated. Ready to retrieve epic stats.");
+        _logger = loggerFactory.CreateLogger<KoffBotStats>();
+    }
+
+    [Function("KoffBotStats")]
+    public async Task<HttpResponseData> Run(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequestData req)
+    {
+        _logger.LogInformation("KoffBot activated. Ready to retrieve epic stats.");
 
         // Get the stats.
         try
@@ -41,11 +46,11 @@ public static class KoffBotStats
 
             rows.Close();
 
-            return new OkObjectResult(result);
+            return req.CreateResponse(HttpStatusCode.OK);
         }
         catch (Exception e)
         {
-            log.LogError("Getting the stats failed.", e);
+            _logger.LogError("Getting the stats failed.", e);
             throw;
         }
     }

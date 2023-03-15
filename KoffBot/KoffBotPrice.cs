@@ -1,42 +1,47 @@
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
-using System.Net.Http;
-using System.Text;
+using OfficeOpenXml;
 using System;
 using System.Data.SqlClient;
-using OfficeOpenXml;
+using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Globalization;
+using System.Net;
+using System.Net.Http;
+using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace KoffBot;
 
-public static class KoffBotPrice
+public class KoffBotPrice
 {
-    [FunctionName("KoffBotPrice")]
-    public static async Task<IActionResult> Run(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
-        ILogger logger)
+    private readonly ILogger _logger;
+
+    public KoffBotPrice(ILoggerFactory loggerFactory)
     {
-        logger.LogInformation("KoffBot activated. Ready to fetch perfect prices.");
+        _logger = loggerFactory.CreateLogger<KoffBotPrice>();
+    }
+
+    [Function("KoffBotPrice")]
+    public async Task<HttpResponseData> Run(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequestData req)
+    {
+        _logger.LogInformation("KoffBot activated. Ready to fetch perfect prices.");
 
         var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
         if (env != Shared.LocalEnvironmentName)
         {
-            await AuthenticationService.Authenticate(req, logger);
+            await AuthenticationService.Authenticate(req, _logger);
         }
 
         // Run without awaiting to avoid Slack errors to users.
-        Task<ObjectResult> task = Task.Run(() => GetKoffPrice(logger));
-        return new OkResult();
+        Task<HttpResponseData> task = Task.Run(() => GetKoffPrice(_logger, req));
+        return req.CreateResponse(HttpStatusCode.OK);
     }
 
-    private static async Task<ObjectResult> GetKoffPrice(ILogger logger)
+    private static async Task<HttpResponseData> GetKoffPrice(ILogger logger, HttpRequestData req)
     {
         // Get data from Alko.
         using var httpClient = new HttpClient();
@@ -49,10 +54,9 @@ public static class KoffBotPrice
         catch (Exception e)
         {
             logger.LogError("Getting data from Alko failed.", e);
-            var result = new ObjectResult("Getting data from Alko failed.")
-            {
-                StatusCode = StatusCodes.Status500InternalServerError
-            };
+            var result = req.CreateResponse(HttpStatusCode.OK);
+            result.WriteString("Getting data from Alko failed.");
+            
             return result;
         }
 
@@ -80,7 +84,7 @@ public static class KoffBotPrice
         };
         await httpClient.SendAsync(content);
 
-        return new OkObjectResult(null);
+        return req.CreateResponse(HttpStatusCode.OK);
     }
 
     private static string SearchCurrentPrice(ExcelPackage package)

@@ -1,26 +1,32 @@
-using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
-using System.Net.Http;
-using System.Text;
 using System;
 using System.Data.SqlClient;
-using System.Text.Json;
-using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace KoffBot;
 
-public static class KoffBotFriday
+public class KoffBotFriday
 {
-    [FunctionName("KoffBotFriday")]
+    private readonly ILogger _logger;
+
+    public KoffBotFriday(ILoggerFactory loggerFactory)
+    {
+        _logger = loggerFactory.CreateLogger<KoffBotFriday>();
+    }
+
+    [Function("KoffBotFriday")]
 #if DEBUG
-    public static async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer, ILogger log)
+    public async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer)
 #else
-    public static async Task Run([TimerTrigger("0 1 0 * * 5")] TimerInfo myTimer, ILogger log)
+    public async Task Run([TimerTrigger("0 1 0 * * 5")] TimerInfo myTimer, ILogger log)
 #endif
     {
-        log.LogInformation("KoffBot activated. Ready to hail friday.");
+        _logger.LogInformation("KoffBot activated. Ready to hail friday.");
 
         // Send message to Slack channel.
         using var httpClient = new HttpClient();
@@ -71,7 +77,7 @@ public static class KoffBotFriday
         }
         catch (Exception e)
         {
-            log.LogError("Saving into friday log failed.", e);
+            _logger.LogError("Saving into friday log failed.", e);
         }
     }
 }

@@ -1,21 +1,21 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Text;
-using System.Security.Cryptography;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using System.Threading.Tasks;
+using System.Linq;
 using System.Security.Authentication;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace KoffBot;
 
 public static class AuthenticationService
 {
-    public static async Task Authenticate(HttpRequest req, ILogger log)
+    public static async Task Authenticate(HttpRequestData req, ILogger log)
     {
-        req.Headers.TryGetValue("X-Slack-Signature", out var slackSignature);
-        req.Headers.TryGetValue("X-Slack-Request-Timestamp", out var slackTimestamp);
-        if (string.IsNullOrEmpty(slackSignature) || string.IsNullOrEmpty(slackTimestamp))
+        req.Headers.TryGetValues("X-Slack-Signature", out var slackSignature);
+        req.Headers.TryGetValues("X-Slack-Request-Timestamp", out var slackTimestamp);
+        if (string.IsNullOrEmpty(slackSignature.FirstOrDefault()) || string.IsNullOrEmpty(slackTimestamp.FirstOrDefault()))
         {
             throw new AuthenticationException("Access denied. The request was missing one or more Slack headers.");
         }
@@ -23,13 +23,13 @@ public static class AuthenticationService
         var signingSecret = Environment.GetEnvironmentVariable("SlackSigningSecret");
         var key = Encoding.UTF8.GetBytes(signingSecret);
 
-        string baseString = $"v0:{slackTimestamp}:{await req.ReadAsStringAsync()}";
+        string baseString = $"v0:{slackTimestamp.First()}:{await req.ReadAsStringAsync()}";
         using (HMACSHA256 hmac = new HMACSHA256(key))
         {
             var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(baseString));
             var finalBase = "v0=" + ToHexString(computedHash);
 
-            if (finalBase != slackSignature)
+            if (finalBase != slackSignature.First())
             {
                 throw new AuthenticationException("Access denied. The calculated hash did not match request hash.");
             }
