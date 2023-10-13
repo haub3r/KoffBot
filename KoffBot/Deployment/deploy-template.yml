@@ -1,0 +1,128 @@
+parameters:
+  - name: environment # Name of the environment, used for displaynames in release status view
+    type: string
+  - name: resourceGroupName # Where main resources of the app will be deployed to
+    type: string
+  - name: location # Which Azure Datacenter resources (resource groups) will be deployed to
+    type: string
+    default: "West Europe"
+  - name: projectName # Names of build artifacts and parameter files etc. are derived from this
+    type: string
+  - name: serviceConnectionName
+    type: string
+  - name: skipInfraDeployment # If true, skips infra deployment and uses previous successful run outputs instead
+    type: string
+  - name: artifactBranch
+    type: string
+
+stages:
+  - stage: "release_${{ lower(parameters.environment) }}"
+    displayName: "release ${{ parameters.environment }}"
+
+    pool:
+      name: Azure Pipelines
+      vmImage: windows-2022
+
+    jobs:
+      - deployment: "deploy_arm"
+        ${{ if eq(parameters.skipInfraDeployment, true)}}:
+          displayName: "(SKIPPED) Deploy infrastucture"
+        ${{ else }}:
+          displayName: "Deploy infrastucture"
+        dependsOn: [] # Runs always first
+        environment: "KoffBot-Main-${{ parameters.environment }}"
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: none # Disable downloading default artifacts
+                - ${{ if eq(parameters.skipInfraDeployment, false)}}:
+                    - task: DownloadPipelineArtifact@2
+                      displayName: Download ARM + script artifacts
+                      inputs:
+                        buildType: "specific"
+                        # Note that the pipeline referenced here has to match the pipeline-name referenced in the deploy.yml resources-section.
+                        project: "$(resources.pipeline.build.projectID)"
+                        definition: "$(resources.pipeline.build.pipelineID)"
+                        preferTriggeringPipeline: true
+                        buildVersionToDownload: "latestFromBranch"
+                        # Check for artifactBranch variable. Defaults to latest pipeline completion branch.
+                        ${{ if eq(parameters.artifactBranch, '$(Build.SourceBranch)') }}:
+                          branchName: "$(Build.SourceBranch)"
+                        ${{ if ne(parameters.artifactBranch, '$(Build.SourceBranch)') }}:
+                          branchName: "refs/heads/${{ parameters.artifactBranch }}"
+                        targetPath: "$(Pipeline.Workspace)"
+
+                    - task: AzureResourceGroupDeployment@3
+                      displayName: "Deploy ARM"
+                      inputs:
+                        connectedServiceName: "${{ parameters.serviceConnectionName }}"
+                        deploymentScope: "Resource Group"
+                        resourceGroupName: "${{ parameters.resourceGroupName }}"
+                        action: "Create Or Update Resource Group"
+                        location: "${{ parameters.location }}"
+                        templateLocation: "Linked artifact"
+                        csmFile: "$(Pipeline.Workspace)/Bicep/main.json"
+                        csmParametersFile: "$(Pipeline.Workspace)/Bicep/arm.Test.params.json"
+                        deploymentMode: Complete
+                        deploymentName: "arm-main-$(build.buildid)"
+                        deploymentOutputs: armOutputs
+
+      - deployment: "deploy_backend"
+        displayName: "Deploy Backend Code"
+        dependsOn: "deploy_arm" # Resources need to be present before code can be deployed
+        environment: ${{ parameters.environment }} # Creates an Environment in Azure DevOps with this name. You can use this to set manual approvals ("checks") there if needed.
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: none # Disable downloading default artifacts
+                - task: DownloadPipelineArtifact@2
+                  displayName: Download Pipeline Artifacts
+                  inputs:
+                    buildType: "specific"
+                    project: "$(resources.pipeline.build_backend.projectID)"
+                    definition: "$(resources.pipeline.build_backend.pipelineID)"
+                    preferTriggeringPipeline: true
+                    buildVersionToDownload: "latestFromBranch"
+                    branchName: "$(Build.SourceBranch)"
+                    targetPath: "$(Pipeline.Workspace)"
+                - task: DownloadPipelineArtifact@2
+                  displayName: Download ARM+Script Artifacts
+                  inputs:
+                    buildType: "specific"
+                    project: "$(resources.pipeline.build_arm.projectID)"
+                    definition: "$(resources.pipeline.build_arm.pipelineID)"
+                    preferTriggeringPipeline: true
+                    buildVersionToDownload: "latestFromBranch"
+                    branchName: "$(Build.SourceBranch)"
+                    targetPath: "$(Pipeline.Workspace)"
+                - task: AzurePowerShell@5
+                  displayName: "Parse main ARM Output Parameters" # most of the resource names are mapped to the pipeline here, used in later steps
+                  inputs:
+                    azureSubscription: "${{ parameters.azureSubscriptionName }}"
+                    ScriptType: InlineScript
+                    Inline: |
+                      $deployment= (Get-AzResourceGroupDeployment -ResourceGroupName "${{ parameters.resourceGroupName }}" | Where-Object ProvisioningState -eq "Succeeded" | Where-Object DeploymentName -like "main-*" )[0]
+                      Write-Output "Fetching naming convention from deployment $($deployment.DeploymentName)"
+                      $outputs= $deployment.outputs
+
+                      foreach ($key in $outputs.Keys)
+                      {
+                        $value = $outputs[$key].Value
+                        Write-Host "##vso[task.setvariable variable=$key;]$value"
+                      }
+                    FailOnStandardError: true
+                    azurePowerShellVersion: "LatestVersion"
+
+                  - task: AzureRmWebAppDeployment@4
+                    displayName: "Deploy Backend API (Staging Slot)"
+                    inputs:
+                      azureSubscription: "${{ parameters.azureSubscriptionName }}"
+                      WebAppName: "$(apiWebAppName)"
+                      packageForLinux: "$(Pipeline.Workspace)/${{ parameters.projectName }}/${{ parameters.projectName }}.zip"
+                      enableCustomDeployment: true
+                      DeploymentType: runFromZip
+                      deployToSlotOrASE: true
+                      ResourceGroupName: '${{ parameters.resourceGroupName }}'
+                      SlotName: "staging"

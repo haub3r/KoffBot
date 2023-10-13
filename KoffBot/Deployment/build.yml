@@ -1,0 +1,67 @@
+# Build artifacts
+name: $(Build.BuildId)
+
+trigger:
+  branches:
+    include:
+      - master
+  paths:
+    include:
+      - KoffBot
+
+variables:
+  - name: projectName
+    value: KoffBot
+
+jobs:
+  - job: build_arm
+    displayName: "Build ARM files"
+    pool:
+      name: Azure Pipelines
+      vmImage: windows-2022
+
+    variables:
+      bicepVersion: 0.20.4
+
+    steps:
+      - checkout: self
+        clean: true
+        fetchDepth: 2 # Allows diffing from previous if needed
+
+      - pwsh: |
+          invoke-webrequest https://github.com/Azure/bicep/releases/download/v$(bicepVersion)/bicep-win-x64.exe -outfile $(Agent.ToolsDirectory)/bicep.exe
+          $(Agent.ToolsDirectory)/bicep.exe build $(projectName)/Deployment/main.bicep
+        displayName: Install & run Bicep (Windows)
+        failOnStderr: true
+        condition: eq(variables['Agent.OS'], 'Windows_NT')
+
+      - pwsh: |
+          invoke-webrequest https://github.com/Azure/bicep/releases/download/v$(bicepVersion)/bicep-linux-x64 -outfile $(Agent.ToolsDirectory)/bicep
+          $(Agent.ToolsDirectory)/bicep build $(projectName)/Deployment/main.bicep
+        failOnStderr: true
+        displayName: Install & run Bicep (Linux)
+        condition: ne(variables['Agent.OS'], 'Windows_NT')
+
+      - task: AzureResourceGroupDeployment@2
+        displayName: "ARM validation with test environment parameters"
+        inputs:
+          azureSubscription: "KoffBot-Development"
+          action: "Create Or Update Resource Group"
+          resourceGroupName: "KoffBot-Dev"
+          location: "West Europe"
+          templateLocation: "Linked artifact"
+          csmFile: "$(System.DefaultWorkingDirectory)/$(projectName)/Deployment/main.json"
+          csmParametersFile: "$(System.DefaultWorkingDirectory)/$(projectName)/Deployment/arm.Development.params.json"
+          deploymentMode: "Validation"
+
+      - task: CopyFiles@2
+        displayName: "Copy files to: $(Pipeline.Workspace)/Bicep"
+        inputs:
+          SourceFolder: $(projectName)/Deployment
+          TargetFolder: "$(Pipeline.Workspace)/Bicep"
+
+      - task: PublishPipelineArtifact@1
+        displayName: "Publish artifact: Bicep"
+        inputs:
+          targetPath: "$(Pipeline.Workspace)/Bicep"
+          artifact: "Bicep"

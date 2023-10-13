@@ -1,0 +1,44 @@
+name: $(Build.BuildId)
+
+parameters:
+  - name: skipInfraDeployment
+    displayName: Skip infrastructure deployment (names retrieved from last successful bicep run)
+    type: boolean
+    default: false
+  - name: artifactBranch
+    displayName: Artifact Branch (e.g. feature/myfeature)
+    type: string
+    default: $(Build.SourceBranch)
+
+trigger: none
+
+resources:
+  pipelines:
+    - pipeline: build
+      source: KoffBot Main - Build KoffBot
+      trigger:
+        branches:
+          - master
+        tags:
+          - Deploy
+
+stages:
+  - template: deploy-template.yml
+    parameters:
+      environment: "Development"
+      resourceGroupName: "KoffBot-Development"
+      projectName: KoffBot
+      location: westeurope
+      serviceConnectionName: "KoffBot-Development"
+      skipInfraDeployment: ${{ parameters.skipInfraDeployment }}
+      artifactBranch: ${{ parameters.artifactBranch }}
+
+  - template: deploy-template.yml
+    parameters:
+      environment: "Production"
+      resourceGroupName: "koffbot"
+      projectName: KoffBot
+      location: westeurope
+      serviceConnectionName: "KoffBot"
+      skipInfraDeployment: ${{ parameters.skipInfraDeployment }}
+      artifactBranch: ${{ parameters.artifactBranch }}
