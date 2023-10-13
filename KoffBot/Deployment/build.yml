@@ -45,7 +45,7 @@ jobs:
       - task: AzureResourceGroupDeployment@2
         displayName: "ARM validation with test environment parameters"
         inputs:
-          azureSubscription: "KoffBot-Development"
+          azureSubscription: "KoffBot-GitHub"
           action: "Create Or Update Resource Group"
           resourceGroupName: "KoffBot-Dev"
           location: "West Europe"

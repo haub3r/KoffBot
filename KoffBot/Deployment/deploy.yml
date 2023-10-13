@@ -29,7 +29,7 @@ stages:
       resourceGroupName: "KoffBot-Development"
       projectName: KoffBot
       location: westeurope
-      serviceConnectionName: "KoffBot-Development"
+      serviceConnectionName: "KoffBot-GitHub"
       skipInfraDeployment: ${{ parameters.skipInfraDeployment }}
       artifactBranch: ${{ parameters.artifactBranch }}
 
@@ -39,6 +39,6 @@ stages:
       resourceGroupName: "koffbot"
       projectName: KoffBot
       location: westeurope
-      serviceConnectionName: "KoffBot"
+      serviceConnectionName: "KoffBot-GitHub"
       skipInfraDeployment: ${{ parameters.skipInfraDeployment }}
       artifactBranch: ${{ parameters.artifactBranch }}
