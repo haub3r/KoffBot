@@ -18,7 +18,7 @@ public class KoffBotStatsFunction
     }
 
     [Function("KoffBotStats")]
-    public async Task<HttpResponseData> Run(
+    public async Task<StatsDto> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequestData req)
     {
         _logger.LogInformation("KoffBot activated. Ready to retrieve epic stats.");
@@ -46,7 +46,7 @@ public class KoffBotStatsFunction
 
             rows.Close();
 
-            return req.CreateResponse(HttpStatusCode.OK);
+            return result;
         }
         catch (Exception e)
         {
