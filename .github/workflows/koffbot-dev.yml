@@ -28,6 +28,7 @@ jobs:
         uses: azure/login@v1.4.0
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+          allow-no-subscriptions: true
 
       - name: "Run Azure Functions Action"
         uses: Azure/functions-action@v1.3.1
