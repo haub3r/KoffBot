@@ -70,7 +70,7 @@ public class KoffBotToast
         // Send message to Slack channel.
         var message = new ToastSlackMessageDTO()
         {
-            Text = "Koff! Nyt GitHub Actioneilla!"
+            Text = "Koff!"
         };
 
         if (drunkMode)
