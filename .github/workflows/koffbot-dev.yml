@@ -3,7 +3,7 @@ name: Build and deploy KoffBot Development .NET Function App to Azure
 on:
   push:
     branches:
-      - master
+      - feature/*
 
 jobs:
   build-and-deploy:
