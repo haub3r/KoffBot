@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 
 namespace KoffBot;
 
-public class KoffBotUntappd
+public class KoffBotUntappdFunction
 {
     private readonly ILogger _logger;
 
-    public KoffBotUntappd(ILoggerFactory loggerFactory)
+    public KoffBotUntappdFunction(ILoggerFactory loggerFactory)
     {
-        _logger = loggerFactory.CreateLogger<KoffBotUntappd>();
+        _logger = loggerFactory.CreateLogger<KoffBotUntappdFunction>();
     }
 
     [Function("KoffBotUntappd")]

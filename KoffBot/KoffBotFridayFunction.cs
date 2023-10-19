@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 
 namespace KoffBot;
 
-public class KoffBotFriday
+public class KoffBotFridayFunction
 {
     private readonly ILogger _logger;
 
-    public KoffBotFriday(ILoggerFactory loggerFactory)
+    public KoffBotFridayFunction(ILoggerFactory loggerFactory)
     {
-        _logger = loggerFactory.CreateLogger<KoffBotFriday>();
+        _logger = loggerFactory.CreateLogger<KoffBotFridayFunction>();
     }
 
     [Function("KoffBotFriday")]

@@ -15,13 +15,13 @@ using System.Threading.Tasks;
 
 namespace KoffBot;
 
-public class KoffBotPrice
+public class KoffBotPriceFunction
 {
     private readonly ILogger _logger;
 
-    public KoffBotPrice(ILoggerFactory loggerFactory)
+    public KoffBotPriceFunction(ILoggerFactory loggerFactory)
     {
-        _logger = loggerFactory.CreateLogger<KoffBotPrice>();
+        _logger = loggerFactory.CreateLogger<KoffBotPriceFunction>();
     }
 
     [Function("KoffBotPrice")]

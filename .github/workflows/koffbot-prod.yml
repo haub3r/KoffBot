@@ -1,4 +1,4 @@
-name: Build and deploy KoffBot .NET Function App to Azure
+name: Build and deploy KoffBot Function App to Azure
 
 on:
   push:
