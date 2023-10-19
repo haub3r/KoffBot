@@ -11,13 +11,13 @@ using System.Threading.Tasks;
 
 namespace KoffBot;
 
-public class KoffBotAdvertisement
+public class KoffBotAdvertisementFunction
 {
     private readonly ILogger _logger;
 
-    public KoffBotAdvertisement(ILoggerFactory loggerFactory)
+    public KoffBotAdvertisementFunction(ILoggerFactory loggerFactory)
     {
-        _logger = loggerFactory.CreateLogger<KoffBotAdvertisement>();
+        _logger = loggerFactory.CreateLogger<KoffBotAdvertisementFunction>();
     }
 
     [Function("KoffBotAdvertisement")]

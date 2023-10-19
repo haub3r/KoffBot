@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace KoffBot;
 
-public class KoffBotStats
+public class KoffBotStatsFunction
 {
     private readonly ILogger _logger;
 
-    public KoffBotStats(ILoggerFactory loggerFactory)
+    public KoffBotStatsFunction(ILoggerFactory loggerFactory)
     {
-        _logger = loggerFactory.CreateLogger<KoffBotStats>();
+        _logger = loggerFactory.CreateLogger<KoffBotStatsFunction>();
     }
 
     [Function("KoffBotStats")]
