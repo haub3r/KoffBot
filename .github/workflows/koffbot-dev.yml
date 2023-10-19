@@ -1,0 +1,38 @@
+name: Build and deploy .NET Core Function App to Azure
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Checkout GitHub Action"
+        uses: actions/checkout@master
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: "3.1.x"
+
+      - name: "Run .NET Core Tests"
+        run: dotnet test --configuration Release
+
+      - name: "Publish .NET Core Project"
+        run: dotnet publish --configuration Release --output ./publish
+
+      - name: "Login via Azure CLI"
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: "Run Azure Functions Action"
+        uses: Azure/functions-action@v1
+        id: fa
+        with:
+          app-name: koffbot-dev
+          package: ./publish
+          publish-profile: ${{ secrets.AZURE_CREDENTIALS }}
