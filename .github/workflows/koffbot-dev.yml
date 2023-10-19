@@ -13,15 +13,15 @@ jobs:
       - name: "Checkout GitHub Action"
         uses: actions/checkout@master
 
-      - name: Setup .NET Core
+      - name: Setup .NET 7
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: "3.1.x"
+          dotnet-version: "7.0.x"
 
-      - name: "Run .NET Core Tests"
+      - name: "Run .NET Tests"
         run: dotnet test --configuration Release
 
-      - name: "Publish .NET Core Project"
+      - name: "Publish .NET Project"
         run: dotnet publish --configuration Release --output ./publish
 
       - name: "Login via Azure CLI"
