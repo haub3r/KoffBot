@@ -1,20 +1,20 @@
-name: Build and deploy KoffBot Development .NET Function App to Azure
+name: Build and deploy KoffBot .NET Function App to Azure
 
 on:
   push:
     branches:
-      - feature/*
+      - master
 
 jobs:
   build-and-deploy:
-    name: Build and deploy KoffBot Dev
+    name: Build and deploy KoffBot
     runs-on: ubuntu-latest
 
     steps:
       - name: "Login via Azure CLI"
         uses: azure/login@v1.4.0
         with:
-          creds: "${{ secrets.AZURE_CREDENTIALS_DEV }}"
+          creds: "${{ secrets.AZURE_CREDENTIALS_PROD }}"
 
       - name: "Checkout GitHub Action"
         uses: actions/checkout@master
@@ -34,6 +34,6 @@ jobs:
         uses: Azure/functions-action@v1.3.1
         id: fa
         with:
-          app-name: koffbot-dev
+          app-name: koffbot
           package: ./publish
-          publish-profile: "${{ secrets.AZURE_PUBLISH_PROFILE_DEV }}"
+          publish-profile: "${{ secrets.AZURE_PUBLISH_PROFILE_PROD }}"
