@@ -2,7 +2,7 @@
 
 namespace KoffBot;
 
-public class HolidayDTO
+public class HolidayDto
 {
     public DateTime Date { get; set; }
     public string Name { get; set; }

@@ -68,7 +68,7 @@ public class KoffBotToastFunction
         }
 
         // Send message to Slack channel.
-        var message = new ToastSlackMessageDTO()
+        var message = new ToastSlackMessageDto()
         {
             Text = "Koff!"
         };

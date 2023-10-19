@@ -49,7 +49,7 @@ public class KoffBotFridayFunction
 
         Random random = new Random();
         int randomIndex = random.Next(0, messages.Length);
-        var dto = new FridaySlackMessageDTO
+        var dto = new FridaySlackMessageDto
         {
             Text = messages[randomIndex]
         };

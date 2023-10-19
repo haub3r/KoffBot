@@ -44,7 +44,7 @@ public class KoffBotAdvertisementFunction
         string responseMessage;
         try
         {
-            var aiDto = new AiRequestDTO
+            var aiDto = new AiRequestDto
             {
                 MaxTokens = 150,
                 Model = "text-davinci-002",
@@ -58,7 +58,7 @@ public class KoffBotAdvertisementFunction
             aiRequest.Headers.Add("Authorization", Environment.GetEnvironmentVariable("OpenAiApiKey"));
             var response = await httpClient.SendAsync(aiRequest);
             var responseContent = await response.Content.ReadAsStringAsync();
-            var parsed = JsonSerializer.Deserialize<AiResponseDTO>(responseContent);
+            var parsed = JsonSerializer.Deserialize<AiResponseDto>(responseContent);
             responseMessage = parsed.Choices.First().Text;
         }
         catch (Exception e)
@@ -70,7 +70,7 @@ public class KoffBotAdvertisementFunction
         }
 
         // Send message to Slack channel.
-        var slackDto = new PriceSlackMessageDTO
+        var slackDto = new PriceSlackMessageDto
         {
             Text = responseMessage
         };

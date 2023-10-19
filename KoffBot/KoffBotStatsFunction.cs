@@ -26,7 +26,7 @@ public class KoffBotStatsFunction
         // Get the stats.
         try
         {
-            var result = new StatsDTO();
+            var result = new StatsDto();
             var connectionString = Environment.GetEnvironmentVariable("DbConnectionString");
             using SqlConnection conn = new SqlConnection(connectionString);
 
