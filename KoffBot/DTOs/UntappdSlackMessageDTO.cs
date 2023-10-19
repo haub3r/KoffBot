@@ -2,7 +2,7 @@
 
 namespace KoffBot;
 
-public class UntappdSlackMessageDTO
+public class UntappdSlackMessageDto
 {
     [JsonPropertyName("text")]
     public string Text { get; set; }

@@ -32,7 +32,7 @@ public class KoffBotUntappdFunction
         }
 
         using var httpClient = new HttpClient();
-        var dto = new UntappdSlackMessageDTO
+        var dto = new UntappdSlackMessageDto
         {
             Text = $"Muista, että voit arvostella Koffin Untappd-sovelluksessa. Sovelluksen saa osoitteesta: www.untappd.com. Annathan Koffille viisi tähteä :koff:"
         };

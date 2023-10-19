@@ -1,6 +1,6 @@
 ﻿namespace KoffBot;
 
-public class StatsDTO
+public class StatsDto
 {
     public int FridayCount { get; set; }
     public int ToastCount { get; set; }

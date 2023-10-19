@@ -73,7 +73,7 @@ public class KoffBotPriceFunction
         var message = DetermineMessage(price, lastPrice, firstRunToday);
 
         // Send message to Slack channel.
-        var dto = new PriceSlackMessageDTO
+        var dto = new PriceSlackMessageDto
         {
             Text = $"Koff-tölkin hinta tänään: {price}€{Environment.NewLine}Edellisen tarkistuksen aikainen hinta: {lastPrice}€{Environment.NewLine}{Environment.NewLine}{message}"
         };

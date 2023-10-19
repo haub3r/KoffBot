@@ -34,7 +34,7 @@ public class KoffBotDrunkFunction
 
         // Send message to Slack channel.
         using var httpClient = new HttpClient();
-        var dto = new DrunkSlackMessageDTO
+        var dto = new DrunkSlackMessageDto
         {
             Text = "KoffBot drank some delicious Koff beer and is now in 'Drunk Mode' for the next hour. Toasting will be difficult."
         };

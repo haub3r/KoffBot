@@ -19,7 +19,10 @@ public static class Messages
         "Perjantai! Onko se aftereille, keikalle vai yökerholle? Sen kaiken kertoo :koff:",
         "Perjantai! :koff: Perjantai! :koff: Perjantai!!! :koff: :koff: :koff:",
         "Onko taas mennyt liian vähän kaljaa? Älä sure, tänään on perjantai! Koff! :koff:",
-        "Perjantain olutarvostelu: Karhu - 1/10 :nauseated_face: --- Koff - 10/10 :star-struck:"
+        "Perjantain olutarvostelu: Karhu - 1/10 :nauseated_face: --- Koff - 10/10 :star-struck:",
+        "Perjantai! Iiro, oletko toimistolla? Baarit joihin on vähemmän kuin 100 askelta: Barski, Kitty's, Praha, Vltava, Ooster :koff:",
+        "Perjantai! Jos olet toimistolla, muista matkalla kotiin käydä hakemassa kaupasta Koff! Jos olet kotona, hae kaupasta Koff!",
+        "Perjantai! Mutta perjantai ei ole perjantai ilman olutta. Avaa siis illan ensimmäinen janon sammuttava Koff! :koff:"
     };
 
     public static string[] FridayPossibilitiesWinter = new string[]

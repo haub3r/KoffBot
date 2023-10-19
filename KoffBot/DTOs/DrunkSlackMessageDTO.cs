@@ -2,7 +2,7 @@
 
 namespace KoffBot;
 
-public class DrunkSlackMessageDTO
+public class DrunkSlackMessageDto
 {
     [JsonPropertyName("text")]
     public string Text { get; set; }
