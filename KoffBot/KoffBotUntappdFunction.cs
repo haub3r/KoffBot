@@ -23,7 +23,7 @@ public class KoffBotUntappdFunction
     public async Task<HttpResponseData> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequestData req)
     {
-        _logger.LogInformation("KoffBot activated. Ready to advertise untappd.");
+        _logger.LogInformation("KoffBot activated. Ready to advertise Untappd.");
 
         var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
         if (env != Shared.LocalEnvironmentName)

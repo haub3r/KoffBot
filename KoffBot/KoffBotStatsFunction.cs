@@ -20,7 +20,7 @@ public class KoffBotStatsFunction
     public async Task<StatsDto> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequestData req)
     {
-        _logger.LogInformation("KoffBot activated. Ready to retrieve epic stats.");
+        _logger.LogInformation("KoffBot activated. Ready to retrieve epic statistics.");
 
         // Get the stats.
         try

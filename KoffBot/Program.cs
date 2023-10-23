@@ -12,10 +12,6 @@ class Program
             {
                 builder.UseDefaultWorkerMiddleware();
             })
-            //.ConfigureServices(s =>
-            //{
-            //    s.AddSingleton<IHttpResponderService, DefaultHttpResponderService>();
-            //})
             .Build();
 
         await host.RunAsync();

@@ -22,7 +22,8 @@ public static class Messages
         "Perjantain olutarvostelu: Karhu - 1/10 :nauseated_face: --- Koff - 10/10 :star-struck:",
         "Perjantai! Iiro, oletko toimistolla? Baarit joihin on vähemmän kuin 100 askelta: Barski, Kitty's, Praha, Vltava, Ooster :koff:",
         "Perjantai! Jos olet toimistolla, muista matkalla kotiin käydä hakemassa kaupasta Koff! Jos olet kotona, hae kaupasta Koff!",
-        "Perjantai! Mutta perjantai ei ole perjantai ilman olutta. Avaa siis illan ensimmäinen janon sammuttava Koff! :koff:"
+        "Perjantai! Mutta perjantai ei ole perjantai ilman olutta. Avaa siis illan ensimmäinen janon sammuttava Koff! :koff:",
+        "Aloita viikonloppu oikein – nauti perjantaina raikas ja kylmä Koff!"
     };
 
     public static string[] FridayPossibilitiesWinter = new string[]
