@@ -3,7 +3,6 @@ using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Data.SqlClient;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace KoffBot;
