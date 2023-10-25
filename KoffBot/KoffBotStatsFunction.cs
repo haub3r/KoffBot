@@ -1,18 +1,21 @@
+using KoffBot.Database;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Data.SqlClient;
 using System.Threading.Tasks;
 
 namespace KoffBot;
 
 public class KoffBotStatsFunction
 {
+    private readonly KoffBotContext _dbContext;
     private readonly ILogger _logger;
 
-    public KoffBotStatsFunction(ILoggerFactory loggerFactory)
+    public KoffBotStatsFunction(KoffBotContext dbContext, ILoggerFactory loggerFactory)
     {
+        _dbContext = dbContext;
         _logger = loggerFactory.CreateLogger<KoffBotStatsFunction>();
     }
 
@@ -26,26 +29,16 @@ public class KoffBotStatsFunction
         try
         {
             var result = new StatsDto();
-            var connectionString = Environment.GetEnvironmentVariable("DbConnectionString");
-            using SqlConnection conn = new SqlConnection(connectionString);
+            var drunkCount = await _dbContext.LogDrunks.CountAsync();
+            var fridayCount = await _dbContext.LogFridays.CountAsync();
+            var toastCount = await _dbContext.LogToasts.CountAsync();
 
-            conn.Open();
-            var sql = $@"SELECT (SELECT COUNT(0) FROM LogToast) as ToastCount, 
-                                    (SELECT COUNT(0) FROM LogFriday) as FridayCount,
-                                    (SELECT COUNT(0) FROM LogDrunk) as DrunkCount";
-
-            using SqlCommand cmd = new SqlCommand(sql, conn);
-            var rows = await cmd.ExecuteReaderAsync();
-            while (await rows.ReadAsync())
+            return new StatsDto
             {
-                result.ToastCount = Convert.ToInt32(rows[0]);
-                result.FridayCount = Convert.ToInt32(rows[1]);
-                result.DrunkCount = Convert.ToInt32(rows[2]);
-            }
-
-            rows.Close();
-
-            return result;
+                DrunkCount = drunkCount,
+                FridayCount = fridayCount,
+                ToastCount = toastCount
+            };
         }
         catch (Exception e)
         {
