@@ -1,19 +1,31 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using KoffBot.Database;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using System;
 using System.Threading.Tasks;
 
 namespace KoffBot;
 
-class Program
+public class Program
 {
-    static async Task Main(string[] args)
+    private static async Task Main(string[] args)
     {
-        var host = new HostBuilder()
+        await CreateHostBuilder(args).Build().RunAsync();
+    }
+
+    public static IHostBuilder CreateHostBuilder(string[] args)
+    {
+        return Host.CreateDefaultBuilder(args)
             .ConfigureFunctionsWorkerDefaults(builder =>
             {
                 builder.UseDefaultWorkerMiddleware();
             })
-            .Build();
-
-        await host.RunAsync();
+            .ConfigureServices((hostContext, services) =>
+            {
+                var connectionString = Environment.GetEnvironmentVariable("DbConnectionString");
+                services.AddDbContext<KoffBotContext>(options =>
+                    options.UseSqlServer(connectionString));
+            });
     }
 }
