@@ -1,0 +1,5 @@
+- Refactor all functions to use EF Core
+- Fix Advertisement and Price functions (problem is the async execution?)
+- Add appsettings files instead of current setting style
+- Move shared files to a designated "shared" folder and rename "Shared" file (some things related to this can be done in settings instead)
+- Take local.settings.json out of gitignore
