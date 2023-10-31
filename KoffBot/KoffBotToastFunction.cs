@@ -39,7 +39,7 @@ public class KoffBotToastFunction
         var drunkMode = false;
         try
         {
-            var lastDrunk = _dbContext.LogDrunks.LastOrDefault()?.Created;
+            var lastDrunk = _dbContext.LogDrunks.OrderByDescending(d => d.Created)?.FirstOrDefault().Created;
             if (lastDrunk != null && DateTime.UtcNow < lastDrunk?.AddHours(1))
             {
                 drunkMode = true;
