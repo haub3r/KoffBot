@@ -1,3 +1,4 @@
+using KoffBot.Database;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
@@ -13,10 +14,12 @@ namespace KoffBot;
 
 public class KoffBotDrunkFunction
 {
+    private readonly KoffBotContext _dbContext;
     private readonly ILogger _logger;
 
-    public KoffBotDrunkFunction(ILoggerFactory loggerFactory)
+    public KoffBotDrunkFunction(KoffBotContext dbContext, ILoggerFactory loggerFactory)
     {
+        _dbContext = dbContext;
         _logger = loggerFactory.CreateLogger<KoffBotDrunkFunction>();
     }
 
@@ -48,17 +51,15 @@ public class KoffBotDrunkFunction
         // Log the drunkedness.
         try
         {
-            var connectionString = Environment.GetEnvironmentVariable("DbConnectionString");
-            using SqlConnection conn = new SqlConnection(connectionString);
-
-            conn.Open();
-            var sql = $@"INSERT INTO LogDrunk (Created, CreatedBy, Modified, ModifiedBy)
-                             VALUES (CURRENT_TIMESTAMP, 'KoffBotDrunk', CURRENT_TIMESTAMP, 'KoffBotDrunk')";
-
-            using (SqlCommand cmd = new SqlCommand(sql, conn))
+            var newRow = new LogDrunk
             {
-                await cmd.ExecuteNonQueryAsync();
-            }
+                Created = DateTime.Now,
+                CreatedBy = "KoffBotDrunk",
+                Modified = DateTime.Now,
+                ModifiedBy = "KoffBotDrunk"
+            };
+            _dbContext.Add(newRow);
+            _dbContext.SaveChanges();
         }
         catch (Exception e)
         {

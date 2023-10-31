@@ -1,9 +1,9 @@
+using KoffBot.Database;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -15,10 +15,12 @@ namespace KoffBot;
 
 public class KoffBotToastFunction
 {
+    private readonly KoffBotContext _dbContext;
     private readonly ILogger _logger;
 
-    public KoffBotToastFunction(ILoggerFactory loggerFactory)
+    public KoffBotToastFunction(KoffBotContext dbContext, ILoggerFactory loggerFactory)
     {
+        _dbContext = dbContext;
         _logger = loggerFactory.CreateLogger<KoffBotToastFunction>();
     }
 
@@ -37,23 +39,8 @@ public class KoffBotToastFunction
         var drunkMode = false;
         try
         {
-            var connectionString = Environment.GetEnvironmentVariable("DbConnectionString");
-            using SqlConnection conn = new SqlConnection(connectionString);
-
-            conn.Open();
-            var sqlGet = $@"SELECT TOP 1 * FROM LogDrunk ORDER BY id DESC";
-
-            using SqlCommand cmd = new SqlCommand(sqlGet, conn);
-            var rows = await cmd.ExecuteReaderAsync();
-            var lastDate = new DateTime();
-            while (await rows.ReadAsync())
-            {
-                lastDate = Convert.ToDateTime(rows[4]);
-            }
-
-            rows.Close();
-
-            if (DateTime.UtcNow < lastDate.AddHours(1))
+            var lastDrunk = _dbContext.LogDrunks.LastOrDefault().Created;
+            if (DateTime.UtcNow < lastDrunk.AddHours(1))
             {
                 drunkMode = true;
             }
@@ -88,17 +75,15 @@ public class KoffBotToastFunction
         // Log the toasting.
         try
         {
-            var connectionString = Environment.GetEnvironmentVariable("DbConnectionString");
-            using SqlConnection conn = new SqlConnection(connectionString);
-
-            conn.Open();
-            var sql = $@"INSERT INTO LogToast (Created, CreatedBy, Modified, ModifiedBy)
-                             VALUES (CURRENT_TIMESTAMP, 'KoffBotToast', CURRENT_TIMESTAMP, 'KoffBotToast')";
-
-            using (SqlCommand cmd = new SqlCommand(sql, conn))
+            var newRow = new LogToast
             {
-                await cmd.ExecuteNonQueryAsync();
-            }
+                Created = DateTime.Now,
+                CreatedBy = "KoffBotToast",
+                Modified = DateTime.Now,
+                ModifiedBy = "KoffBotToast"
+            };
+            _dbContext.Add(newRow);
+            _dbContext.SaveChanges();
         }
         catch (Exception e)
         {

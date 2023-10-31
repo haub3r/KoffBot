@@ -1,7 +1,7 @@
+using KoffBot.Database;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -12,10 +12,12 @@ namespace KoffBot;
 
 public class KoffBotFridayFunction
 {
+    private readonly KoffBotContext _dbContext;
     private readonly ILogger _logger;
 
-    public KoffBotFridayFunction(ILoggerFactory loggerFactory)
+    public KoffBotFridayFunction(KoffBotContext dbContext, ILoggerFactory loggerFactory)
     {
+        _dbContext = dbContext;
         _logger = loggerFactory.CreateLogger<KoffBotFridayFunction>();
     }
 
@@ -63,17 +65,15 @@ public class KoffBotFridayFunction
         // Log the friday.
         try
         {
-            var connectionString = Environment.GetEnvironmentVariable("DbConnectionString");
-            using SqlConnection conn = new SqlConnection(connectionString);
-
-            conn.Open();
-            var sql = $@"INSERT INTO LogFriday (Created, CreatedBy, Modified, ModifiedBy)
-                             VALUES (CURRENT_TIMESTAMP, 'KoffBotFriday', CURRENT_TIMESTAMP, 'KoffBotFriday')";
-
-            using (SqlCommand cmd = new SqlCommand(sql, conn))
+            var newRow = new LogFriday
             {
-                var rows = await cmd.ExecuteNonQueryAsync();
-            }
+                Created = DateTime.Now,
+                CreatedBy = "KoffBotFriday",
+                Modified = DateTime.Now,
+                ModifiedBy = "KoffBotFriday"
+            };
+            _dbContext.Add(newRow);
+            _dbContext.SaveChanges();
         }
         catch (Exception e)
         {
