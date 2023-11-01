@@ -62,7 +62,7 @@ public class KoffBotPriceFunction
         using var package = new ExcelPackage(new FileInfo($"{Path.GetTempPath()}\\alkon-hinnasto-tekstitiedostona.xlsx"));
 
         // Search for current price.
-        var price = SearchCurrentPrice(package);
+        var price = SearchCurrentPrice(logger, package);
 
         // Handle price in DB.
         (string lastPrice, bool firstRunToday) = await HandleDbOperations(logger, price);
@@ -85,7 +85,7 @@ public class KoffBotPriceFunction
         return req.CreateResponse(HttpStatusCode.OK);
     }
 
-    private static string SearchCurrentPrice(ExcelPackage package)
+    private static string SearchCurrentPrice(ILogger logger, ExcelPackage package)
     {
         var firstSheet = package.Workbook.Worksheets.First();
 
@@ -94,11 +94,15 @@ public class KoffBotPriceFunction
         where cells.Value.ToString() == "Koff tölkki"
         select cells;
 
+        logger.LogInformation("Found cells with koff tölkki");
+
         var currentRowNumber = koffCell.First().Start.Row;
         var currentRow =
         from cells in firstSheet.Cells
         where cells.Start.Row == currentRowNumber
         select cells;
+
+        logger.LogInformation("Found first cell with koff tölkki");
 
         var unitSize = "";
         var price = "";
