@@ -47,7 +47,6 @@ public class KoffBotPriceFunction
         {
             var url = "https://www.alko.fi/INTERSHOP/static/WFS/Alko-OnlineShop-Site/-/Alko-OnlineShop/fi_FI/Alkon%20Hinnasto%20Tekstitiedostona/alkon-hinnasto-tekstitiedostona.xlsx";
             byte[] fileBytes = await httpClient.GetByteArrayAsync(url);
-            logger.LogInformation("Got file");
             File.WriteAllBytes($"{Path.GetTempPath()}\\alkon-hinnasto-tekstitiedostona.xlsx", fileBytes);
         }
         catch (Exception e)
