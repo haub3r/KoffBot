@@ -36,9 +36,7 @@ public class KoffBotPriceFunction
             await AuthenticationService.Authenticate(req, _logger);
         }
 
-        // Run without awaiting to avoid Slack errors to users.
-        Task<HttpResponseData> task = Task.Run(() => GetKoffPrice(_logger, req));
-        return req.CreateResponse(HttpStatusCode.OK);
+        return await GetKoffPrice(_logger, req);
     }
 
     private static async Task<HttpResponseData> GetKoffPrice(ILogger logger, HttpRequestData req)
@@ -49,7 +47,8 @@ public class KoffBotPriceFunction
         {
             var url = "https://www.alko.fi/INTERSHOP/static/WFS/Alko-OnlineShop-Site/-/Alko-OnlineShop/fi_FI/Alkon%20Hinnasto%20Tekstitiedostona/alkon-hinnasto-tekstitiedostona.xlsx";
             byte[] fileBytes = await httpClient.GetByteArrayAsync(url);
-            File.WriteAllBytes($"{Path.GetTempPath()}\\alkon-hinnasto-tekstitiedostona.xlsx", fileBytes);
+            File.WriteAllBytes($"{Environment.CurrentDirectory}\\alkon-hinnasto-tekstitiedostona.xlsx", fileBytes);
+            logger.LogInformation($"Path: {Environment.CurrentDirectory}\\alkon-hinnasto-tekstitiedostona.xlsx");
         }
         catch (Exception e)
         {
@@ -61,7 +60,7 @@ public class KoffBotPriceFunction
         }
 
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-        using var package = new ExcelPackage(new FileInfo($"{Path.GetTempPath()}\\alkon-hinnasto-tekstitiedostona.xlsx"));
+        using var package = new ExcelPackage(new FileInfo($"{Environment.CurrentDirectory}\\alkon-hinnasto-tekstitiedostona.xlsx"));
 
         // Search for current price.
         var price = SearchCurrentPrice(package);
