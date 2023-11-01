@@ -36,9 +36,7 @@ public class KoffBotPriceFunction
             await AuthenticationService.Authenticate(req, _logger);
         }
 
-        // Run without awaiting to avoid Slack errors to users.
-        Task<HttpResponseData> task = Task.Run(() => GetKoffPrice(_logger, req));
-        return req.CreateResponse(HttpStatusCode.OK);
+        return await GetKoffPrice(_logger, req);
     }
 
     private static async Task<HttpResponseData> GetKoffPrice(ILogger logger, HttpRequestData req)
