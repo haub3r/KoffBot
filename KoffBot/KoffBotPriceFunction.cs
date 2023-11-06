@@ -93,7 +93,7 @@ public class KoffBotPriceFunction
 
         var koffCell =
         from cells in firstSheet.Cells
-        where cells.Value.ToString() == "Koff tölkki"
+        where cells.Value.ToString() == "718934"
         select cells;
 
         logger.LogInformation("Found cells with koff tölkki:    " + koffCell.FirstOrDefault());
