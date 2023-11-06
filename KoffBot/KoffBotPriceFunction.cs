@@ -1,9 +1,9 @@
+using KoffBot.Database;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using OfficeOpenXml;
 using System;
-using System.Data.SqlClient;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -17,10 +17,12 @@ namespace KoffBot;
 
 public class KoffBotPriceFunction
 {
+    private readonly KoffBotContext _dbContext;
     private readonly ILogger _logger;
 
-    public KoffBotPriceFunction(ILoggerFactory loggerFactory)
+    public KoffBotPriceFunction(KoffBotContext dbContext, ILoggerFactory loggerFactory)
     {
+        _dbContext = dbContext;
         _logger = loggerFactory.CreateLogger<KoffBotPriceFunction>();
     }
 
@@ -36,10 +38,10 @@ public class KoffBotPriceFunction
             await AuthenticationService.Authenticate(req, _logger);
         }
 
-        return await GetKoffPrice(_logger, req);
+        return await GetKoffPrice(_dbContext, _logger, req);
     }
 
-    private static async Task<HttpResponseData> GetKoffPrice(ILogger logger, HttpRequestData req)
+    private static async Task<HttpResponseData> GetKoffPrice(KoffBotContext _dbContext, ILogger logger, HttpRequestData req)
     {
         // Get data from Alko.
         using var httpClient = new HttpClient();
@@ -65,7 +67,7 @@ public class KoffBotPriceFunction
         var price = SearchCurrentPrice(logger, package);
 
         // Handle price in DB.
-        (string lastPrice, bool firstRunToday) = await HandleDbOperations(logger, price);
+        (string lastPrice, bool firstRunToday) = await HandleDbOperations(_dbContext, logger, price);
 
         // Determine message.
         var message = DetermineMessage(price, lastPrice, firstRunToday);
@@ -76,11 +78,9 @@ public class KoffBotPriceFunction
             Text = $"Koff-tölkin hinta tänään: {price}€{Environment.NewLine}Edellisen tarkistuksen aikainen hinta: {lastPrice}€{Environment.NewLine}{Environment.NewLine}{message}"
         };
 
-        var serializedDto = JsonSerializer.Serialize(dto);
-        var encodedDto = Encoding.UTF8.GetBytes(serializedDto);
         var content = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())
         {
-            Content = new StringContent(Encoding.UTF8.GetString(encodedDto), Encoding.UTF8, "application/json")
+            Content = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json")
         };
         await httpClient.SendAsync(content);
 
@@ -127,39 +127,27 @@ public class KoffBotPriceFunction
         return price;
     }
 
-    private async static Task<(string, bool)> HandleDbOperations(ILogger log, string price)
+    private async static Task<(string, bool)> HandleDbOperations(KoffBotContext _dbContext, ILogger log, string price)
     {
         var lastPrice = "";
         var firstRunToday = false;
         try
         {
-            var connectionString = Environment.GetEnvironmentVariable("DbConnectionString");
-            using SqlConnection conn = new SqlConnection(connectionString);
+            var lastDate = _dbContext.LogPrices.OrderByDescending(d => d.Created)?.FirstOrDefault().Created;
 
-            conn.Open();
-            var sqlGet = $@"SELECT TOP 1 * FROM LogPrice ORDER BY id DESC";
-
-            using SqlCommand cmd = new SqlCommand(sqlGet, conn);
-            var rows = await cmd.ExecuteReaderAsync();
-            var lastDate = new DateTime();
-            while (await rows.ReadAsync())
-            {
-                lastPrice = rows[1].ToString();
-                lastDate = Convert.ToDateTime(rows[3]);
-            }
-
-            rows.Close();
-
-            if (lastDate.Date < DateTime.Today)
+            if (lastDate < DateTime.Today)
             {
                 firstRunToday = true;
-                var sqlSave = $@"INSERT INTO LogPrice (Amount, Created, CreatedBy, Modified, ModifiedBy)
-                             VALUES ({price}, CURRENT_TIMESTAMP, 'KoffBotPrice', CURRENT_TIMESTAMP, 'KoffBotPrice')";
-
-                using (SqlCommand cmdSave = new SqlCommand(sqlSave, conn))
+                var newPrice = new LogPrice
                 {
-                    await cmdSave.ExecuteNonQueryAsync();
-                }
+                    Amount = price,
+                    Created = DateTime.Now,
+                    CreatedBy = "KoffBotPrice",
+                    Modified = DateTime.Now,
+                    ModifiedBy = "KoffBotPrice"
+                };
+                _dbContext.LogPrices.Add(newPrice);
+                await _dbContext.SaveChangesAsync();
             }
         }
         catch (Exception e)
