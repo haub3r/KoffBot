@@ -96,7 +96,7 @@ public class KoffBotPriceFunction
         where cells.Value.ToString() == "Koff tölkki"
         select cells;
 
-        logger.LogInformation("Found cells with koff tölkki");
+        logger.LogInformation("Found cells with koff tölkki:    " + koffCell.FirstOrDefault());
 
         var currentRowNumber = koffCell.First().Start.Row;
         var currentRow =
