@@ -78,7 +78,7 @@ public class KoffBotPriceFunction
 
         var content = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())
         {
-            Content = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json")
+            Content = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json; charset=utf-8")
         };
         await httpClient.SendAsync(content);
 
@@ -89,22 +89,16 @@ public class KoffBotPriceFunction
     {
         var firstSheet = package.Workbook.Worksheets.First();
 
-        logger.LogInformation("Found worksheet");
-
         var koffCell =
         from cells in firstSheet.Cells
         where cells.Value.ToString() == "718934"
         select cells;
-
-        logger.LogInformation("Found cells with koff tölkki:    " + koffCell.FirstOrDefault());
 
         var currentRowNumber = koffCell.First().Start.Row;
         var currentRow =
         from cells in firstSheet.Cells
         where cells.Start.Row == currentRowNumber
         select cells;
-
-        logger.LogInformation("Found first cell with koff tölkki");
 
         var unitSize = "";
         var price = "";
