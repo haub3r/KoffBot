@@ -11,6 +11,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using System.Text.Unicode;
 using System.Threading.Tasks;
 
 namespace KoffBot;
@@ -72,10 +73,12 @@ public class KoffBotPriceFunction
         // Determine message.
         var message = DetermineMessage(price, lastPrice, firstRunToday);
 
+        var t = Encoding.UTF8.GetBytes($"Koff-tölkin hinta tänään: {price}€{Environment.NewLine}Edellisen tarkistuksen aikainen hinta: {lastPrice}€{Environment.NewLine}{Environment.NewLine}{message}");
+        var f = Encoding.UTF8.GetString(t);
         // Send message to Slack channel.
         var dto = new PriceSlackMessageDto
         {
-            Text = $"Koff-tölkin hinta tänään: {price}€{Environment.NewLine}Edellisen tarkistuksen aikainen hinta: {lastPrice}€{Environment.NewLine}{Environment.NewLine}{message}"
+            Text = f
         };
 
         var content = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())
