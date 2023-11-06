@@ -133,9 +133,8 @@ public class KoffBotPriceFunction
         var firstRunToday = false;
         try
         {
-            var lastDate = _dbContext.LogPrices.OrderByDescending(d => d.Created)?.FirstOrDefault().Created;
-
-            if (lastDate < DateTime.Today)
+            var lastUpdate = _dbContext.LogPrices.OrderByDescending(d => d.Created)?.FirstOrDefault();
+            if (lastUpdate.Created < DateTime.Today)
             {
                 firstRunToday = true;
                 var newPrice = new LogPrice
@@ -149,6 +148,7 @@ public class KoffBotPriceFunction
                 _dbContext.LogPrices.Add(newPrice);
                 await _dbContext.SaveChangesAsync();
             }
+            lastPrice = lastUpdate.Amount;
         }
         catch (Exception e)
         {
