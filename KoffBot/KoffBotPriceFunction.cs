@@ -1,9 +1,9 @@
+using KoffBot.Database;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using OfficeOpenXml;
 using System;
-using System.Data.SqlClient;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -11,16 +11,19 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using System.Text.Unicode;
 using System.Threading.Tasks;
 
 namespace KoffBot;
 
 public class KoffBotPriceFunction
 {
+    private readonly KoffBotContext _dbContext;
     private readonly ILogger _logger;
 
-    public KoffBotPriceFunction(ILoggerFactory loggerFactory)
+    public KoffBotPriceFunction(KoffBotContext dbContext, ILoggerFactory loggerFactory)
     {
+        _dbContext = dbContext;
         _logger = loggerFactory.CreateLogger<KoffBotPriceFunction>();
     }
 
@@ -36,10 +39,10 @@ public class KoffBotPriceFunction
             await AuthenticationService.Authenticate(req, _logger);
         }
 
-        return await GetKoffPrice(_logger, req);
+        return await GetKoffPrice(_dbContext, _logger, req);
     }
 
-    private static async Task<HttpResponseData> GetKoffPrice(ILogger logger, HttpRequestData req)
+    private static async Task<HttpResponseData> GetKoffPrice(KoffBotContext _dbContext, ILogger logger, HttpRequestData req)
     {
         // Get data from Alko.
         using var httpClient = new HttpClient();
@@ -47,7 +50,6 @@ public class KoffBotPriceFunction
         {
             var url = "https://www.alko.fi/INTERSHOP/static/WFS/Alko-OnlineShop-Site/-/Alko-OnlineShop/fi_FI/Alkon%20Hinnasto%20Tekstitiedostona/alkon-hinnasto-tekstitiedostona.xlsx";
             byte[] fileBytes = await httpClient.GetByteArrayAsync(url);
-            logger.LogInformation("Got file");
             File.WriteAllBytes($"{Path.GetTempPath()}\\alkon-hinnasto-tekstitiedostona.xlsx", fileBytes);
         }
         catch (Exception e)
@@ -63,18 +65,20 @@ public class KoffBotPriceFunction
         using var package = new ExcelPackage(new FileInfo($"{Path.GetTempPath()}\\alkon-hinnasto-tekstitiedostona.xlsx"));
 
         // Search for current price.
-        var price = SearchCurrentPrice(package);
+        var price = SearchCurrentPrice(logger, package);
 
         // Handle price in DB.
-        (string lastPrice, bool firstRunToday) = await HandleDbOperations(logger, price);
+        (string lastPrice, bool firstRunToday) = await HandleDbOperations(_dbContext, logger, price);
 
         // Determine message.
         var message = DetermineMessage(price, lastPrice, firstRunToday);
 
+        var t = Encoding.UTF8.GetBytes($"Koff-tölkin hinta tänään: {price}€{Environment.NewLine}Edellisen tarkistuksen aikainen hinta: {lastPrice}€{Environment.NewLine}{Environment.NewLine}{message}");
+        var f = Encoding.UTF8.GetString(t);
         // Send message to Slack channel.
         var dto = new PriceSlackMessageDto
         {
-            Text = $"Koff-tölkin hinta tänään: {price}€{Environment.NewLine}Edellisen tarkistuksen aikainen hinta: {lastPrice}€{Environment.NewLine}{Environment.NewLine}{message}"
+            Text = f
         };
 
         var content = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())
@@ -86,13 +90,13 @@ public class KoffBotPriceFunction
         return req.CreateResponse(HttpStatusCode.OK);
     }
 
-    private static string SearchCurrentPrice(ExcelPackage package)
+    private static string SearchCurrentPrice(ILogger logger, ExcelPackage package)
     {
         var firstSheet = package.Workbook.Worksheets.First();
 
         var koffCell =
         from cells in firstSheet.Cells
-        where cells.Value.ToString() == "Koff tölkki"
+        where cells.Value.ToString() == "718934"
         select cells;
 
         var currentRowNumber = koffCell.First().Start.Row;
@@ -126,40 +130,28 @@ public class KoffBotPriceFunction
         return price;
     }
 
-    private async static Task<(string, bool)> HandleDbOperations(ILogger log, string price)
+    private async static Task<(string, bool)> HandleDbOperations(KoffBotContext _dbContext, ILogger log, string price)
     {
         var lastPrice = "";
         var firstRunToday = false;
         try
         {
-            var connectionString = Environment.GetEnvironmentVariable("DbConnectionString");
-            using SqlConnection conn = new SqlConnection(connectionString);
-
-            conn.Open();
-            var sqlGet = $@"SELECT TOP 1 * FROM LogPrice ORDER BY id DESC";
-
-            using SqlCommand cmd = new SqlCommand(sqlGet, conn);
-            var rows = await cmd.ExecuteReaderAsync();
-            var lastDate = new DateTime();
-            while (await rows.ReadAsync())
-            {
-                lastPrice = rows[1].ToString();
-                lastDate = Convert.ToDateTime(rows[3]);
-            }
-
-            rows.Close();
-
-            if (lastDate.Date < DateTime.Today)
+            var lastUpdate = _dbContext.LogPrices.OrderByDescending(d => d.Created)?.FirstOrDefault();
+            if (lastUpdate.Created < DateTime.Today)
             {
                 firstRunToday = true;
-                var sqlSave = $@"INSERT INTO LogPrice (Amount, Created, CreatedBy, Modified, ModifiedBy)
-                             VALUES ({price}, CURRENT_TIMESTAMP, 'KoffBotPrice', CURRENT_TIMESTAMP, 'KoffBotPrice')";
-
-                using (SqlCommand cmdSave = new SqlCommand(sqlSave, conn))
+                var newPrice = new LogPrice
                 {
-                    await cmdSave.ExecuteNonQueryAsync();
-                }
+                    Amount = price,
+                    Created = DateTime.Now,
+                    CreatedBy = "KoffBotPrice",
+                    Modified = DateTime.Now,
+                    ModifiedBy = "KoffBotPrice"
+                };
+                _dbContext.LogPrices.Add(newPrice);
+                await _dbContext.SaveChangesAsync();
             }
+            lastPrice = lastUpdate.Amount;
         }
         catch (Exception e)
         {

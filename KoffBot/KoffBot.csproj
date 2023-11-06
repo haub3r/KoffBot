@@ -6,7 +6,7 @@
     <UserSecretsId>baf0507b-f470-489d-91b8-8c3213f91fba</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="EPPlus" Version="6.1.2" />
+    <PackageReference Include="EPPlus" Version="7.0.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.19.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.1.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" Version="4.2.0" />
