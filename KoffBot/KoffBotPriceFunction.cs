@@ -89,6 +89,8 @@ public class KoffBotPriceFunction
     {
         var firstSheet = package.Workbook.Worksheets.First();
 
+        logger.LogInformation("Found worksheet");
+
         var koffCell =
         from cells in firstSheet.Cells
         where cells.Value.ToString() == "Koff tölkki"
