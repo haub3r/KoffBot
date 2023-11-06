@@ -76,9 +76,11 @@ public class KoffBotPriceFunction
             Text = $"Koff-tölkin hinta tänään: {price}€{Environment.NewLine}Edellisen tarkistuksen aikainen hinta: {lastPrice}€{Environment.NewLine}{Environment.NewLine}{message}"
         };
 
+        var serializedDto = JsonSerializer.Serialize(dto);
+        var encodedDto = Encoding.UTF8.GetBytes(serializedDto);
         var content = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())
         {
-            Content = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json; charset=utf-8")
+            Content = new StringContent(Encoding.UTF8.GetString(encodedDto), Encoding.UTF8, "application/json")
         };
         await httpClient.SendAsync(content);
 
