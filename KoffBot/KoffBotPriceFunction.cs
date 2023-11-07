@@ -2,7 +2,7 @@ using KoffBot.Database;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using System.Text.Json;
 using OfficeOpenXml;
 using System;
 using System.Globalization;
@@ -72,15 +72,19 @@ public class KoffBotPriceFunction
         // Determine message.
         var message = DetermineMessage(price, lastPrice, firstRunToday);
 
+        var fullMessage = $"Koff-tölkin hinta tänään: {price}€{Environment.NewLine}Edellisen tarkistuksen aikainen hinta: {lastPrice}€{Environment.NewLine}{Environment.NewLine}{message}";
+        byte[] utf8Bytes = Encoding.UTF8.GetBytes(fullMessage);
+        string convertedFullMessage = Encoding.UTF8.GetString(utf8Bytes);
+
         // Send message to Slack channel.
         var dto = new PriceSlackMessageDto
         {
-            Text = $"Koff-tölkin hinta tänään: {price}€{Environment.NewLine}Edellisen tarkistuksen aikainen hinta: {lastPrice}€{Environment.NewLine}{Environment.NewLine}{message}"
+            Text = convertedFullMessage,
         };
 
         var content = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())
         {
-            Content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json")
+            Content = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json")
         };
         await httpClient.SendAsync(content);
 
