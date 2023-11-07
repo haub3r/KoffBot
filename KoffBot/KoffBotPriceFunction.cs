@@ -11,7 +11,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace KoffBot;
@@ -93,15 +92,15 @@ public class KoffBotPriceFunction
         var firstSheet = package.Workbook.Worksheets.First();
 
         var koffCell =
-        from cells in firstSheet.Cells
-        where cells.Value.ToString() == "718934"
-        select cells;
+            from cells in firstSheet.Cells
+            where cells.Value.ToString() == "718934"
+            select cells;
 
         var currentRowNumber = koffCell.First().Start.Row;
         var currentRow =
-        from cells in firstSheet.Cells
-        where cells.Start.Row == currentRowNumber
-        select cells;
+            from cells in firstSheet.Cells
+            where cells.Start.Row == currentRowNumber
+            select cells;
 
         var unitSize = "";
         var price = "";
