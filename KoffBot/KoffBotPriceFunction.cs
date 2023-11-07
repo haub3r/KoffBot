@@ -1,4 +1,4 @@
-using KoffBot.Database;
+Ôªøusing KoffBot.Database;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
@@ -38,7 +38,9 @@ public class KoffBotPriceFunction
             await AuthenticationService.Authenticate(req, _logger);
         }
 
-        return await GetKoffPrice(_dbContext, _logger, req);
+        // Run without awaiting to avoid Slack errors to users.
+        Task<HttpResponseData> task = Task.Run(() => GetKoffPrice(_dbContext, _logger, req));
+        return req.CreateResponse(HttpStatusCode.OK);
     }
 
     private static async Task<HttpResponseData> GetKoffPrice(KoffBotContext _dbContext, ILogger logger, HttpRequestData req)
@@ -64,17 +66,15 @@ public class KoffBotPriceFunction
         using var package = new ExcelPackage(new FileInfo($"{Path.GetTempPath()}\\alkon-hinnasto-tekstitiedostona.xlsx"));
 
         // Search for current price.
-        var price = SearchCurrentPrice(logger, package);
-        var t = Encoding.UTF8.GetBytes(price);
-        var pr = Encoding.UTF8.GetString(t);
+        var price = SearchCurrentPrice(package);
 
         // Handle price in DB.
-        (string lastPrice, bool firstRunToday) = await HandleDbOperations(_dbContext, logger, pr);
+        (string lastPrice, bool firstRunToday) = await HandleDbOperations(_dbContext, logger, price);
 
         // Determine message.
-        var message = DetermineMessage(pr, lastPrice, firstRunToday);
+        var message = DetermineMessage(price, lastPrice, firstRunToday);
 
-        var fullMessage = $"Koff-tˆlkin hinta t‰n‰‰n: {pr}Ä{Environment.NewLine}Edellisen tarkistuksen aikainen hinta: {lastPrice}Ä{Environment.NewLine}{Environment.NewLine}{message}";
+        var fullMessage = $"Koff-t√∂lkin hinta t√§n√§√§n: {price}‚Ç¨{Environment.NewLine}Edellisen tarkistuksen aikainen hinta: {lastPrice}‚Ç¨{Environment.NewLine}{Environment.NewLine}{message}";
 
         // Send message to Slack channel.
         var dto = new PriceSlackMessageDto
@@ -91,7 +91,7 @@ public class KoffBotPriceFunction
         return req.CreateResponse(HttpStatusCode.OK);
     }
 
-    private static string SearchCurrentPrice(ILogger logger, ExcelPackage package)
+    private static string SearchCurrentPrice(ExcelPackage package)
     {
         var firstSheet = package.Workbook.Worksheets.First();
 
@@ -121,7 +121,7 @@ public class KoffBotPriceFunction
                     price = cell.Text;
                     break;
                 case "F":
-                    priceByLitre = cell.Text + "Ä";
+                    priceByLitre = cell.Text + "‚Ç¨";
                     break;
                 default:
                     break;
@@ -169,11 +169,11 @@ public class KoffBotPriceFunction
         string message;
         if (!firstRunToday)
         {
-            message = "Tarkistit jo hinnan aikaisemmin t‰n‰‰n! Sinulla on selv‰sti jano, miten olisi yksi Koff? :koff:";
+            message = "Tarkistit jo hinnan aikaisemmin t√§n√§√§n! Sinulla on selv√§sti jano, miten olisi yksi Koff? :koff:";
         }
         else if (priceAsDec < lastPriceAsDec)
         {
-            message = "Nyt on siis entist‰ helpompaa ottaa yksi Koff! :koff:";
+            message = "Nyt on siis entist√§ helpompaa ottaa yksi Koff! :koff:";
         }
         else if (priceAsDec > lastPriceAsDec)
         {
