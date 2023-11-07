@@ -38,10 +38,12 @@ public class KoffBotPriceFunction
             await AuthenticationService.Authenticate(req, _logger);
         }
 
-        return await GetKoffPrice(_dbContext, _logger, req);
+        // Run without awaiting to avoid Slack errors to users.
+        Task task = Task.Run(() => GetKoffPrice(_dbContext, _logger, req));
+        return req.CreateResponse(HttpStatusCode.OK);
     }
 
-    private static async Task<HttpResponseData> GetKoffPrice(KoffBotContext _dbContext, ILogger logger, HttpRequestData req)
+    private static async Task GetKoffPrice(KoffBotContext _dbContext, ILogger logger, HttpRequestData req)
     {
         // Get data from Alko.
         using var httpClient = new HttpClient();
@@ -54,10 +56,6 @@ public class KoffBotPriceFunction
         catch (Exception e)
         {
             logger.LogError("Getting data from Alko failed.", e);
-            var result = req.CreateResponse(HttpStatusCode.InternalServerError);
-            result.WriteString("Getting data from Alko failed.");
-            
-            return result;
         }
 
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
@@ -85,8 +83,6 @@ public class KoffBotPriceFunction
             Content = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json")
         };
         await httpClient.SendAsync(content);
-
-        return req.CreateResponse(HttpStatusCode.OK);
     }
 
     private static string SearchCurrentPrice(ExcelPackage package)
