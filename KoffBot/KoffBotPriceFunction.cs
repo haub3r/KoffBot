@@ -72,14 +72,14 @@ public class KoffBotPriceFunction
         // Determine message.
         var message = DetermineMessage(price, lastPrice, firstRunToday);
 
-        var fullMessage = $"Koff-tölkin hinta tänään: {price}€{Environment.NewLine}Edellisen tarkistuksen aikainen hinta: {lastPrice}€{Environment.NewLine}{Environment.NewLine}{message}";
-        byte[] utf8Bytes = Encoding.UTF8.GetBytes(fullMessage);
-        string convertedFullMessage = Encoding.UTF8.GetString(utf8Bytes);
+        var fullMessage = $"Koff-tölkin hinta tänään: {price}€ Edellisen tarkistuksen aikainen hinta: {lastPrice}€ {message}";
+        //byte[] utf8Bytes = Encoding.UTF8.GetBytes(fullMessage);
+        //string convertedFullMessage = Encoding.UTF8.GetString(utf8Bytes);
 
         // Send message to Slack channel.
         var dto = new PriceSlackMessageDto
         {
-            Text = convertedFullMessage,
+            Text = fullMessage,
         };
 
         var content = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())
