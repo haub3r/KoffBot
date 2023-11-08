@@ -20,8 +20,9 @@ public class KoffBotAdvertisementFunction
         _logger = loggerFactory.CreateLogger<KoffBotAdvertisementFunction>();
     }
 
+    // For this function to work, we need to buy OpenAI API access again.
     [Function("KoffBotAdvertisement")]
-    public async Task<HttpResponseData> Run(
+    public async Task Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequestData req)
     {
         _logger.LogInformation("KoffBot activated. Ready to advertise using AI.");
@@ -32,16 +33,14 @@ public class KoffBotAdvertisementFunction
             await AuthenticationService.Authenticate(req, _logger);
         }
 
-        // Run without awaiting to avoid Slack errors to users.
-        Task<HttpResponseData> task = Task.Run(() => GetAiMessage(_logger, req));
-        return req.CreateResponse(HttpStatusCode.OK);
+        await GetAiMessage(_logger, req);
     }
 
-    private static async Task<HttpResponseData> GetAiMessage(ILogger logger, HttpRequestData req)
+    private static async Task GetAiMessage(ILogger logger, HttpRequestData req)
     {
         // Get message from OpenAI.
         using var httpClient = new HttpClient();
-        string responseMessage;
+        string responseMessage = "";
         try
         {
             var aiDto = new AiRequestDto
@@ -65,8 +64,6 @@ public class KoffBotAdvertisementFunction
         {
             logger.LogError("Getting data from OpenAI failed.", e);
             var result = req.CreateResponse(HttpStatusCode.InternalServerError);
-            result.WriteString("Getting data from OpenAI failed.");
-            return result;
         }
 
         // Send message to Slack channel.
@@ -80,7 +77,5 @@ public class KoffBotAdvertisementFunction
             Content = new StringContent(JsonSerializer.Serialize(slackDto), Encoding.UTF8, "application/json")
         };
         await httpClient.SendAsync(slackRequest);
-
-        return req.CreateResponse(HttpStatusCode.OK);
     }
 }
