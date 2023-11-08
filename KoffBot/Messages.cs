@@ -20,10 +20,12 @@ public static class Messages
         "Perjantai! :koff: Perjantai! :koff: Perjantai!!! :koff: :koff: :koff:",
         "Onko taas mennyt liian vähän kaljaa? Älä sure, tänään on perjantai! Koff! :koff:",
         "Perjantain olutarvostelu: Karhu - 1/10 :nauseated_face: --- Koff - 10/10 :star-struck:",
-        "Perjantai! Iiro, oletko toimistolla? Baarit joihin on vähemmän kuin 100 askelta: Barski, Kitty's, Praha, Vltava, Ooster :koff:",
+        "Perjantai! Iiro, oletko toimistolla? Baarit joihin on vähemmän kuin 100 askelta: Barski, Kitty's, Praha, Vltava, Ooster. :koff:",
         "Perjantai! Jos olet toimistolla, muista matkalla kotiin käydä hakemassa kaupasta Koff! Jos olet kotona, hae kaupasta Koff!",
         "Perjantai! Mutta perjantai ei ole perjantai ilman olutta. Avaa siis illan ensimmäinen janon sammuttava Koff! :koff:",
-        "Aloita viikonloppu oikein – nauti perjantaina raikas ja kylmä Koff!"
+        "Aloita viikonloppu oikein – nauti perjantaina raikas ja kylmä Koff!",
+        "Tänään on perjantai! Rahahuolia? Meillä on sinulle sijoituskohde! Koffin hinta on noussut vuoden 2021 kurssista '1,60€' -> vuoden 2024 kurssiin '1,80€! Koff! :koff:",
+        "Perjantai! Sampsa, alakerrassa on Alko, K-Supermarket ja baari. Miksei kädessäsi ole jo jääkylmä ja janon sammuttava Koff! :koff:"
     };
 
     public static string[] FridayPossibilitiesWinter = new string[]
