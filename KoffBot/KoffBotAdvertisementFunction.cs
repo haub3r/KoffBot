@@ -20,6 +20,7 @@ public class KoffBotAdvertisementFunction
         _logger = loggerFactory.CreateLogger<KoffBotAdvertisementFunction>();
     }
 
+    // For this function to work, we need to buy OpenAI API access again.
     [Function("KoffBotAdvertisement")]
     public async Task Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequestData req)
