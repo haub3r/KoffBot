@@ -24,23 +24,26 @@ public static class Messages
         "Perjantai! Jos olet toimistolla, muista matkalla kotiin käydä hakemassa kaupasta Koff! Jos olet kotona, hae kaupasta Koff!",
         "Perjantai! Mutta perjantai ei ole perjantai ilman olutta. Avaa siis illan ensimmäinen janon sammuttava Koff! :koff:",
         "Aloita viikonloppu oikein – nauti perjantaina raikas ja kylmä Koff!",
-        "Tänään on perjantai! Rahahuolia? Meillä on sinulle sijoituskohde! Koffin hinta on noussut vuoden 2021 kurssista '1,60€' -> vuoden 2024 kurssiin '1,80€! Koff! :koff:",
-        "Perjantai! Sampsa, alakerrassa on Alko, K-Supermarket ja baari. Miksei kädessäsi ole jo jääkylmä ja janon sammuttava Koff! :koff:"
+        "Tänään on perjantai! Rahahuolia? Meillä on sinulle sijoituskohde! Koffin hinta on noussut vuoden 2021 kurssista '1,60€' -> vuoden 2024 kurssiin '1,80€'! Koff! :koff:",
+        "Perjantai! Sampsa, alakerrassa on Alko, K-Supermarket ja baari. Miksei kädessäsi ole jo jääkylmä ja janon sammuttava Koff! :koff:",
+        "Perjantai on työpäivä. Töiden jälkeen kelpaa raikas ja janon sammuttava Koff!"
     };
 
     public static string[] FridayPossibilitiesWinter = new string[]
     {
         "Talvi on synkkä ja kylmä. Piristä mieltäsi ottamalla Koff! :koff:",
-        "Ulkona on pimeää :new_moon_with_face: Koff tuo valoa tähänkin perjantaihin (ja elämään)! :koff:",
-        "Paras lämmike talven kylmyyteen: ~Jallu~ Koff!",
-        "Perjantai! Lumen keskellä on hyvä ottaa Koff! Mutta älä sammu sinne pää edellä! :skull_and_crossbones:"
+        "Ulkona on pimeä :new_moon_with_face: Koff tuo valoa tähänkin perjantaihin (ja elämään)! :koff:",
+        "Paras lämmike talven kylmyyteen: ~Jallu~ Koff! :koff:",
+        "Perjantai! Lumen keskellä on hyvä ottaa Koff! Mutta älä sammu sinne pää edellä! :skull_and_crossbones:",
+        "ChatGPT:n suusta: \"Perjantai ja Koff, kaksi asiaa jotka ovat yhtä odotettuja kuin joulupukki jouluaattona... Tai no, ainakin jos pukki toisi Koffia lahjaksi.\" No niinpä! Koff! :koff:"
     };
 
     public static string[] FridayPossibilitiesSummer = new string[]
     {
-        "Perjantai! Aurinko paistaa, uimarannat ovat täyttyvät ja janon sammuttaa :koff: :koff: :koff: :koff: :koff:",
+        "Perjantai! Aurinko paistaa, uimarannat ovat täynnä ja janon sammuttaa :koff: :koff: :koff: :koff: :koff:",
         "Helteillä auttaa jääkylmä Koff! Nyt on perjantai, mikset ole jo korkannut?",
-        "Paras virvoike kesän kuumuuteen: ~Lonkero~ Koff!",
-        "Perjantai! Helteisiin on taas kuollut ihmisiä, pysykää nesteytettynä! Mikä siihen parempi tapa kuin ottaa janon sammuttava Koff!"
+        "Paras virvoike kesän kuumuuteen: ~Lonkero~ Koff! :koff:",
+        "Perjantai! Helteisiin on taas kuollut ihmisiä, pysykää nesteytettynä! Mikä siihen parempi tapa kuin ottaa janon sammuttava Koff!",
+        "ChatGPT:n suusta: \"Perjantai ja Koff, ne ovat kuin juhannussää: aina yhtä pettymys, mutta silti niitä odottaa innolla.\" AI on asioiden äärellä! Koff! :koff:"
     };
 }
