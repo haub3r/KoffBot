@@ -39,7 +39,7 @@ public class KoffBotEchoFunction
         using var httpClient = new HttpClient();
         var dto = new EchoSlackMessageDto
         {
-            Text = formData.Text
+            Text = formData.MessageFromUser
         };
 
         var content = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())

@@ -14,5 +14,5 @@ public class SlackPayloadDto
     public string UserName { get; set; }
 
     [JsonPropertyName("text")]
-    public string Text { get; set; }
+    public string MessageFromUser { get; set; }
 }
