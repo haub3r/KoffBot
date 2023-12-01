@@ -5,7 +5,7 @@ namespace KoffBot;
 public class SlackPayloadDto
 {
     [JsonPropertyName("channel_name")]
-    public string Channel { get; set; }
+    public string ChannelName { get; set; }
 
     [JsonPropertyName("user_id")]
     public string UserId { get; set; }
