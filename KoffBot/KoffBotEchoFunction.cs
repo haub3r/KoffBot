@@ -13,6 +13,7 @@ public class KoffBotEchoFunction
 {
     private readonly ILogger _logger;
     private const string IiroUserId = "U0106R0N6NB";
+    private const string IiroUserDevId = "U01D73HKFC3";
 
     public KoffBotEchoFunction(ILoggerFactory loggerFactory)
     {
@@ -33,18 +34,22 @@ public class KoffBotEchoFunction
 
         string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
         NameValueCollection payload = HttpUtility.ParseQueryString(requestBody);
-        _logger.LogInformation($"Payload from Slack: {payload}");
+        _logger.LogInformation("Payload from Slack: {payload}", payload);
 
-        if (payload["user_id"] != IiroUserId)
+        var userId = payload["user_id"];
+        var userMessage = payload["text"];
+        var userName = payload["user_name"];
+
+        if (userId != IiroUserId || userId != IiroUserDevId)
         {
-            _logger.LogWarning($"Echo function was called by someone else than Iiro (it was {payload["user_name"]}). User ID of the caller: {payload["user_id"]}");
+            _logger.LogWarning("Echo function was called by someone else than Iiro (it was {userName}). User ID of the caller: {userId}", userName, userId);
             return req.CreateResponse(HttpStatusCode.Forbidden);
         }
 
         using var httpClient = new HttpClient();
         var dto = new EchoSlackMessageDto
         {
-            Text = payload["text"]
+            Text = userMessage
         };
 
         var content = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())
