@@ -19,8 +19,7 @@ public class KoffBotEchoFunction
 
     [Function("KoffBotEcho")]
     public async Task<HttpResponseData> Run(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequestData req, [FromQuery] string text, 
-        [FromQuery] string user_id, [FromQuery] string user_name)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequestData req, [FromForm] SlackPayloadDto formData)
     {
         _logger.LogInformation("KoffBot activated. Ready to echo some wise words.");
 
@@ -30,17 +29,17 @@ public class KoffBotEchoFunction
             await AuthenticationService.Authenticate(req, _logger);
         }
 
-        //var payload = JsonSerializer.Deserialize<SlackPayloadDto>(req.Body);
-        if (user_id != "U0106R0N6NB")
+        var payload = JsonSerializer.Deserialize<SlackPayloadDto>(req.Body);
+        if (payload.UserId != "U0106R0N6NB")
         {
-            _logger.LogWarning($"Echo function was called by someone else than Iiro (it was {user_name}). User ID of the caller: {user_id}");
+            _logger.LogWarning($"Echo function was called by someone else than Iiro (it was {payload.UserName}). User ID of the caller: {payload.UserId}");
             return req.CreateResponse(HttpStatusCode.Forbidden);
         }
 
         using var httpClient = new HttpClient();
         var dto = new EchoSlackMessageDto
         {
-            Text = text
+            Text = payload.Text
         };
 
         var content = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())
