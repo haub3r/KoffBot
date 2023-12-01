@@ -22,7 +22,7 @@ public class KoffBotEchoFunction
 
     [Function("KoffBotEcho")]
     public async Task<HttpResponseData> Run(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequestData req)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequestData req)
     {
         _logger.LogInformation("KoffBot activated. Ready to echo some wise words.");
 
@@ -33,6 +33,7 @@ public class KoffBotEchoFunction
         }
 
         string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+        _logger.LogInformation("Request body from Slack: {requestBody}", requestBody);
         NameValueCollection payload = HttpUtility.ParseQueryString(requestBody);
         _logger.LogInformation("Payload from Slack: {payload}", payload);
 
