@@ -33,6 +33,7 @@ public class KoffBotEchoFunction
 
         string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
         NameValueCollection payload = HttpUtility.ParseQueryString(requestBody);
+        _logger.LogInformation($"Payload from Slack: {payload}");
 
         if (payload["user_id"] != IiroUserId)
         {
