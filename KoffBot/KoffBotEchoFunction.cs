@@ -41,6 +41,7 @@ public class KoffBotEchoFunction
         string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
         //_logger.LogInformation("Request body from Slack: {requestBody}", requestBody);
         NameValueCollection payload = HttpUtility.ParseQueryString(requestBody);
+        _logger.LogInformation("Payload from Slack: {requestBody}", JsonSerializer.Serialize(payload));
         //_logger.LogInformation("Payload from Slack: {payload}", payload);
 
         var userId = payload["user_id"];
