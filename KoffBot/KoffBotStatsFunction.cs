@@ -40,7 +40,7 @@ public class KoffBotStatsFunction
         }
         catch (Exception e)
         {
-            _logger.LogError("Getting the stats failed.", e);
+            _logger.LogError("Getting the stats failed. {e}", e);
             throw;
         }
     }

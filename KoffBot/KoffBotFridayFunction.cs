@@ -34,7 +34,7 @@ public class KoffBotFridayFunction
         // Add season specific messages to message pool.
         if (DateTime.Now.Month >= 11 || DateTime.Now.Month <= 3)
         {
-            messages = messages.Concat(Messages.FridayPossibilitiesWinter).ToArray();
+            messages = [.. messages, .. Messages.FridayPossibilitiesWinter];
         }
 
         if (DateTime.Now.Month == 6 
@@ -42,10 +42,10 @@ public class KoffBotFridayFunction
             || DateTime.Now.Month == 8
             || DateTime.Now.Month == 9)
         {
-            messages = messages.Concat(Messages.FridayPossibilitiesSummer).ToArray();
+            messages = [.. messages, .. Messages.FridayPossibilitiesSummer];
         }
 
-        Random random = new Random();
+        Random random = new();
         int randomIndex = random.Next(0, messages.Length);
         var dto = new FridaySlackMessageDto
         {
@@ -73,7 +73,7 @@ public class KoffBotFridayFunction
         }
         catch (Exception e)
         {
-            _logger.LogError("Saving into friday log failed.", e);
+            _logger.LogError("Saving into friday log failed. {e}", e);
         }
     }
 }

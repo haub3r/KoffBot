@@ -28,7 +28,7 @@ public class KoffBotDrunkFunction
         var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
         if (env != Shared.LocalEnvironmentName)
         {
-            await AuthenticationService.Authenticate(req, _logger);
+            await AuthenticationService.Authenticate(req);
         }
 
         // Send message to Slack channel.
@@ -59,7 +59,7 @@ public class KoffBotDrunkFunction
         }
         catch (Exception e)
         {
-            _logger.LogError("Saving into drunkedness log failed.", e);
+            _logger.LogError("Saving into drunkedness log failed. {e}", e);
             var result = req.CreateResponse(HttpStatusCode.OK);
             result.WriteString("Saving into drunkedness log failed.");
 

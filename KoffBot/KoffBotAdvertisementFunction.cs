@@ -26,7 +26,7 @@ public class KoffBotAdvertisementFunction
         var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
         if (env != Shared.LocalEnvironmentName)
         {
-            await AuthenticationService.Authenticate(req, _logger);
+            await AuthenticationService.Authenticate(req);
         }
 
         await GetAiMessage(_logger, req);
@@ -58,7 +58,7 @@ public class KoffBotAdvertisementFunction
         }
         catch (Exception e)
         {
-            logger.LogError("Getting data from OpenAI failed.", e);
+            logger.LogError("Getting data from OpenAI failed. {e}", e);
             var result = req.CreateResponse(HttpStatusCode.InternalServerError);
         }
 

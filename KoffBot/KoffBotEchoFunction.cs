@@ -29,7 +29,7 @@ public class KoffBotEchoFunction
         var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
         if (env != Shared.LocalEnvironmentName)
         {
-            await AuthenticationService.Authenticate(req, _logger);
+            await AuthenticationService.Authenticate(req);
         }
 
         //_logger.LogInformation("Request from Slack: {requestBody}", JsonSerializer.Serialize(req));

@@ -8,7 +8,7 @@ namespace KoffBot;
 
 public static class AuthenticationService
 {
-    public static async Task Authenticate(HttpRequestData req, ILogger log)
+    public static async Task Authenticate(HttpRequestData req)
     {
         req.Headers.TryGetValues("X-Slack-Signature", out var slackSignature);
         req.Headers.TryGetValues("X-Slack-Request-Timestamp", out var slackTimestamp);
@@ -21,21 +21,20 @@ public static class AuthenticationService
         var key = Encoding.UTF8.GetBytes(signingSecret);
 
         string baseString = $"v0:{slackTimestamp.First()}:{await req.ReadAsStringAsync()}";
-        using (HMACSHA256 hmac = new HMACSHA256(key))
-        {
-            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(baseString));
-            var finalBase = "v0=" + ToHexString(computedHash);
+        
+        using HMACSHA256 hmac = new(key);
+        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(baseString));
+        var finalBase = "v0=" + ToHexString(computedHash);
 
-            if (finalBase != slackSignature.First())
-            {
-                throw new AuthenticationException("Access denied. The calculated hash did not match request hash.");
-            }
+        if (finalBase != slackSignature.First())
+        {
+            throw new AuthenticationException("Access denied. The calculated hash did not match request hash.");
         }
     }
 
     public static string ToHexString(byte[] array)
     {
-        StringBuilder hex = new StringBuilder(array.Length * 2);
+        StringBuilder hex = new(array.Length * 2);
         foreach (byte b in array)
         {
             hex.AppendFormat("{0:x2}", b);

@@ -30,7 +30,7 @@ public class KoffBotPriceFunction
         var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
         if (env != Shared.LocalEnvironmentName)
         {
-            await AuthenticationService.Authenticate(req, _logger);
+            await AuthenticationService.Authenticate(req);
         }
 
         return await GetKoffPrice(_dbContext, _logger, req);
@@ -48,7 +48,7 @@ public class KoffBotPriceFunction
         }
         catch (Exception e)
         {
-            logger.LogError("Getting data from Alko failed.", e);
+            logger.LogError("Getting data from Alko failed. {e}", e);
             var result = req.CreateResponse(HttpStatusCode.InternalServerError);
             result.WriteString("Getting data from Alko failed.");
             
@@ -104,7 +104,7 @@ public class KoffBotPriceFunction
         var priceByLitre = "";
         foreach (var cell in currentRow)
         {
-            var addressLetter = cell.Address.Substring(0, 1);
+            var addressLetter = cell.Address[..1];
             switch (addressLetter)
             {
                 case "D":
@@ -149,7 +149,7 @@ public class KoffBotPriceFunction
         }
         catch (Exception e)
         {
-            log.LogError("Getting the last price failed.", e);
+            log.LogError("Getting the last price failed. {e}", e);
         }
 
         return (lastPrice, firstRunToday);
