@@ -33,7 +33,7 @@ public class KoffBotEchoFunction
         }
 
         //_logger.LogInformation("Request from Slack: {requestBody}", JsonSerializer.Serialize(req));
-        _logger.LogInformation("Body from Slack: {requestBody}", JsonSerializer.Serialize(req.Body));
+        //_logger.LogInformation("Body from Slack: {requestBody}", JsonSerializer.Serialize(req.Body));
         _logger.LogInformation("Binding data from Slack: {requestBody}", JsonSerializer.Serialize(functionContext.BindingContext.BindingData));
         //var test = functionContext.BindingContext.BindingData.TryGetValue("ApplicationProperties", out var appProperties);
         //_logger.LogInformation("App properties from Slack: {requestBody}", JsonSerializer.Serialize(appProperties));
