@@ -25,6 +25,10 @@ public class KoffBotEchoFunction
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequestData req, FunctionContext functionContext)
     {
         _logger.LogInformation("KoffBot activated. Ready to echo some wise words.");
+        _logger.LogInformation("Raw request body from Slack: {req.Body}", req.Body);
+        string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+        NameValueCollection payload = HttpUtility.ParseQueryString(requestBody);
+        _logger.LogInformation("Payload from Slack: {requestBody}", JsonSerializer.Serialize(payload));
 
         var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
         if (env != Shared.LocalEnvironmentName)
@@ -40,10 +44,7 @@ public class KoffBotEchoFunction
         //string requestBody32 = await new StreamReader(appProperties).ReadToEndAsync();
         //_logger.LogInformation("Request query from Slack: {req.Query}", req.Query);
         _logger.LogInformation("Raw request body from Slack: {req.Body}", req.Body);
-        string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
         //_logger.LogInformation("Request body from Slack: {requestBody}", requestBody);
-        NameValueCollection payload = HttpUtility.ParseQueryString(requestBody);
-        _logger.LogInformation("Payload from Slack: {requestBody}", JsonSerializer.Serialize(payload));
         //_logger.LogInformation("Payload from Slack: {payload}", payload);
 
         var userId = payload["user_id"];
