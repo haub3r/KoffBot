@@ -26,7 +26,7 @@ public class KoffBotEchoFunction
     {
         _logger.LogInformation("KoffBot activated. Ready to echo some wise words.");
         _logger.LogInformation("Raw request body from Slack: {req.Body}", req.Body);
-        string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+        string requestBody = await req.ReadAsStringAsync();
         NameValueCollection payload = HttpUtility.ParseQueryString(requestBody);
         _logger.LogInformation("Payload from Slack: {requestBody}", JsonSerializer.Serialize(payload));
 
