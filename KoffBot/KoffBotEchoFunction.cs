@@ -36,7 +36,6 @@ public class KoffBotEchoFunction
         req.Body.Position = 0;
         string requestBody = await req.ReadAsStringAsync();
         NameValueCollection payload = HttpUtility.ParseQueryString(requestBody);
-        _logger.LogInformation("Payload from Slack: {requestBody}", JsonSerializer.Serialize(payload));
 
         var userId = payload["user_id"];
         var userMessage = payload["text"];
