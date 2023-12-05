@@ -25,10 +25,6 @@ public class KoffBotEchoFunction
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequestData req, FunctionContext functionContext)
     {
         _logger.LogInformation("KoffBot activated. Ready to echo some wise words.");
-        _logger.LogInformation("Raw request body from Slack: {req.Body}", req.Body);
-        string requestBody = await req.ReadAsStringAsync();
-        NameValueCollection payload = HttpUtility.ParseQueryString(requestBody);
-        _logger.LogInformation("Payload from Slack: {requestBody}", JsonSerializer.Serialize(payload));
 
         var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
         if (env != Shared.LocalEnvironmentName)
@@ -38,14 +34,18 @@ public class KoffBotEchoFunction
 
         //_logger.LogInformation("Request from Slack: {requestBody}", JsonSerializer.Serialize(req));
         //_logger.LogInformation("Body from Slack: {requestBody}", JsonSerializer.Serialize(req.Body));
-        _logger.LogInformation("Binding data from Slack: {requestBody}", JsonSerializer.Serialize(functionContext.BindingContext.BindingData));
+        //_logger.LogInformation("Binding data from Slack: {requestBody}", JsonSerializer.Serialize(functionContext.BindingContext.BindingData));
         //var test = functionContext.BindingContext.BindingData.TryGetValue("ApplicationProperties", out var appProperties);
         //_logger.LogInformation("App properties from Slack: {requestBody}", JsonSerializer.Serialize(appProperties));
         //string requestBody32 = await new StreamReader(appProperties).ReadToEndAsync();
         //_logger.LogInformation("Request query from Slack: {req.Query}", req.Query);
-        _logger.LogInformation("Raw request body from Slack: {req.Body}", req.Body);
         //_logger.LogInformation("Request body from Slack: {requestBody}", requestBody);
         //_logger.LogInformation("Payload from Slack: {payload}", payload);
+        //_logger.LogInformation("Raw request body from Slack: {req.Body}", req.Body);
+        req.Body.Position = 0;
+        string requestBody = await req.ReadAsStringAsync();
+        NameValueCollection payload = HttpUtility.ParseQueryString(requestBody);
+        _logger.LogInformation("Payload from Slack: {requestBody}", JsonSerializer.Serialize(payload));
 
         var userId = payload["user_id"];
         var userMessage = payload["text"];
