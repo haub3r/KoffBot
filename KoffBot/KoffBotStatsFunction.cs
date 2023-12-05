@@ -3,8 +3,6 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Threading.Tasks;
 
 namespace KoffBot;
 
@@ -42,7 +40,7 @@ public class KoffBotStatsFunction
         }
         catch (Exception e)
         {
-            _logger.LogError("Getting the stats failed.", e);
+            _logger.LogError("Getting the stats failed. {e}", e);
             throw;
         }
     }

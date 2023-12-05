@@ -2,14 +2,9 @@ using KoffBot.Database;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace KoffBot;
 
@@ -32,7 +27,7 @@ public class KoffBotToastFunction
         var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
         if (env != Shared.LocalEnvironmentName)
         {
-            await AuthenticationService.Authenticate(req, _logger);
+            await AuthenticationService.Authenticate(req);
         }
 
         // Check if in "Drunk Mode".
@@ -47,7 +42,7 @@ public class KoffBotToastFunction
         }
         catch (Exception e)
         {
-            _logger.LogError("Reading from drunkedness log failed.", e);
+            _logger.LogError("Reading from drunkedness log failed. {e}", e);
             var result = req.CreateResponse(HttpStatusCode.OK);
             result.WriteString("Reading from drunkedness log failed.");
 
@@ -87,7 +82,7 @@ public class KoffBotToastFunction
         }
         catch (Exception e)
         {
-            _logger.LogError("Saving into toasting log failed.", e);
+            _logger.LogError("Saving into toasting log failed. {e}", e);
             var result = req.CreateResponse(HttpStatusCode.InternalServerError);
             result.WriteString("Saving into toasting log failed.");
 

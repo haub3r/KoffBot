@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace KoffBot;
+﻿namespace KoffBot;
 
 public static class Shared
 {

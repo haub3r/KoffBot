@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace KoffBot.Database;
+﻿namespace KoffBot.Database;
 
 public partial class LogDrunk
 {
