@@ -22,7 +22,7 @@ public class KoffBotEchoFunction
 
     [Function("KoffBotEcho")]
     public async Task<HttpResponseData> Run(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequestData req, FunctionContext functionContext)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequestData req)
     {
         _logger.LogInformation("KoffBot activated. Ready to echo some wise words.");
 
@@ -32,16 +32,7 @@ public class KoffBotEchoFunction
             await AuthenticationService.Authenticate(req);
         }
 
-        //_logger.LogInformation("Request from Slack: {requestBody}", JsonSerializer.Serialize(req));
-        //_logger.LogInformation("Body from Slack: {requestBody}", JsonSerializer.Serialize(req.Body));
-        //_logger.LogInformation("Binding data from Slack: {requestBody}", JsonSerializer.Serialize(functionContext.BindingContext.BindingData));
-        //var test = functionContext.BindingContext.BindingData.TryGetValue("ApplicationProperties", out var appProperties);
-        //_logger.LogInformation("App properties from Slack: {requestBody}", JsonSerializer.Serialize(appProperties));
-        //string requestBody32 = await new StreamReader(appProperties).ReadToEndAsync();
-        //_logger.LogInformation("Request query from Slack: {req.Query}", req.Query);
-        //_logger.LogInformation("Request body from Slack: {requestBody}", requestBody);
-        //_logger.LogInformation("Payload from Slack: {payload}", payload);
-        //_logger.LogInformation("Raw request body from Slack: {req.Body}", req.Body);
+        // Authentication reads the stream also, so we need to set the position to 0 manually.
         req.Body.Position = 0;
         string requestBody = await req.ReadAsStringAsync();
         NameValueCollection payload = HttpUtility.ParseQueryString(requestBody);
@@ -51,7 +42,7 @@ public class KoffBotEchoFunction
         var userMessage = payload["text"];
         var userName = payload["user_name"];
 
-        if (userId != IiroUserId || userId != IiroUserDevId)
+        if (userId != IiroUserId && userId != IiroUserDevId)
         {
             _logger.LogWarning("Echo function was called by someone else than Iiro (it was {userName}). User ID of the caller: {userId}", userName, userId);
             return req.CreateResponse(HttpStatusCode.Forbidden);
