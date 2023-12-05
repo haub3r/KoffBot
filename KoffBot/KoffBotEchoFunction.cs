@@ -38,7 +38,8 @@ public class KoffBotEchoFunction
         //var test = functionContext.BindingContext.BindingData.TryGetValue("ApplicationProperties", out var appProperties);
         //_logger.LogInformation("App properties from Slack: {requestBody}", JsonSerializer.Serialize(appProperties));
         //string requestBody32 = await new StreamReader(appProperties).ReadToEndAsync();
-        _logger.LogInformation("Request query from Slack: {req.Query}", req.Query);
+        //_logger.LogInformation("Request query from Slack: {req.Query}", req.Query);
+        _logger.LogInformation("Raw request body from Slack: {req.Body}", req.Body);
         string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
         //_logger.LogInformation("Request body from Slack: {requestBody}", requestBody);
         NameValueCollection payload = HttpUtility.ParseQueryString(requestBody);
