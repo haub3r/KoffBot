@@ -19,7 +19,7 @@ public class KoffBotHolidayFunction
 #if DEBUG
     public async Task Run([TimerTrigger("0 */1 * * * *")] TimerInfo myTimer)
 #else
-    public async Task Run([TimerTrigger("0 0 0 * * *")] TimerInfo myTimer)
+    public async Task Run([TimerTrigger("0 1 0 * * *")] TimerInfo myTimer)
 #endif
     {
         _logger.LogInformation("KoffBot activated. Ready to check for holidays.");
