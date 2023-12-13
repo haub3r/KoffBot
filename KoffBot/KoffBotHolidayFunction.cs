@@ -1,5 +1,6 @@
 ﻿using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+using System.Globalization;
 using System.Net;
 using System.Text;
 using System.Text.Json;
@@ -35,7 +36,7 @@ public class KoffBotHolidayFunction
         var today = DateTime.Today;
         foreach (var holiday in holidays.SpecialDates)
         {
-            var parsedDate = DateTime.Today;
+            var parsedDate = DateTime.Parse(holiday.Date, CultureInfo.InvariantCulture);
             if (today != parsedDate)
             {
                 continue;
