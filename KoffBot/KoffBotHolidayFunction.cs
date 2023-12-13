@@ -20,7 +20,7 @@ public class KoffBotHolidayFunction
 #if DEBUG
     public async Task Run([TimerTrigger("0 */1 * * * *")] TimerInfo myTimer)
 #else
-    public async Task Run([TimerTrigger("0 1 0 * * *")] TimerInfo myTimer)
+    public async Task Run([TimerTrigger("0 */1 * * * *")] TimerInfo myTimer)
 #endif
     {
         _logger.LogInformation("KoffBot activated. Ready to check for holidays.");
@@ -36,7 +36,8 @@ public class KoffBotHolidayFunction
         var today = DateTime.Today;
         foreach (var holiday in holidays.SpecialDates)
         {
-            var parsedDate = DateTime.Parse(holiday.Date, CultureInfo.InvariantCulture);
+            holiday.Date = "13.12.2023";
+            var parsedDate = DateTime.Parse(holiday.Date, new CultureInfo("fi-FI"));
             if (today != parsedDate)
             {
                 continue;
