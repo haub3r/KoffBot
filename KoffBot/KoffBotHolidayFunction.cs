@@ -43,7 +43,7 @@ public class KoffBotHolidayFunction
             }
 
             var slackMessage = ResolveHolidayMessage(holiday.Name);
-            var message = new HolidaySlackMessageDto()
+            var message = new HolidaySlackMessageDto
             {
                 Text = slackMessage
             };
