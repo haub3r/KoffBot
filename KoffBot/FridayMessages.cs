@@ -1,6 +1,6 @@
 ﻿namespace KoffBot;
 
-public static class Messages
+public static class FridayMessages
 {
     public static string[] FridayPossibilities =
     [
