@@ -68,8 +68,8 @@ public class KoffBotFridayFunction
                 Modified = DateTime.Now,
                 ModifiedBy = "KoffBotFriday"
             };
-            _dbContext.Add(newRow);
-            _dbContext.SaveChanges();
+            await _dbContext.AddAsync(newRow);
+            await _dbContext.SaveChangesAsync();
         }
         catch (Exception e)
         {

@@ -54,8 +54,8 @@ public class KoffBotDrunkFunction
                 Modified = DateTime.Now,
                 ModifiedBy = "KoffBotDrunk"
             };
-            _dbContext.Add(newRow);
-            _dbContext.SaveChanges();
+            await _dbContext.AddAsync(newRow);
+            await _dbContext.SaveChangesAsync();
         }
         catch (Exception e)
         {
