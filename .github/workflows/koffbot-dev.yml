@@ -24,7 +24,7 @@ jobs:
         with:
           subscriptionId: dd77e804-594f-4555-b255-ddf980eba6b0
           resourceGroupName: KoffBot-Dev
-          template: ../Deployment/koffbot.bicep
+          template: ./KoffBot/Deployment/koffbot.bicep
           failOnStdErr: false
 
       - name: Setup .NET 8
