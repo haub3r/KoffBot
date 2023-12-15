@@ -142,7 +142,7 @@ public class KoffBotPriceFunction
                     Modified = DateTime.Now,
                     ModifiedBy = "KoffBotPrice"
                 };
-                _dbContext.LogPrices.Add(newPrice);
+                await _dbContext.LogPrices.AddAsync(newPrice);
                 await _dbContext.SaveChangesAsync();
             }
             lastPrice = lastUpdate.Amount;

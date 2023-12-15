@@ -26,15 +26,12 @@ public class KoffBotFridayFunction
     {
         _logger.LogInformation("KoffBot activated. Ready to hail friday.");
 
-        // Send message to Slack channel.
-        using var httpClient = new HttpClient();
-
-        var messages = Messages.FridayPossibilities;
+        var messages = FridayMessages.FridayPossibilities;
 
         // Add season specific messages to message pool.
         if (DateTime.Now.Month >= 11 || DateTime.Now.Month <= 3)
         {
-            messages = [.. messages, .. Messages.FridayPossibilitiesWinter];
+            messages = [.. messages, .. FridayMessages.FridayPossibilitiesWinter];
         }
 
         if (DateTime.Now.Month == 6 
@@ -42,7 +39,7 @@ public class KoffBotFridayFunction
             || DateTime.Now.Month == 8
             || DateTime.Now.Month == 9)
         {
-            messages = [.. messages, .. Messages.FridayPossibilitiesSummer];
+            messages = [.. messages, .. FridayMessages.FridayPossibilitiesSummer];
         }
 
         Random random = new();
@@ -56,6 +53,9 @@ public class KoffBotFridayFunction
         {
             Content = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json")
         };
+
+        // Send message to Slack channel.
+        using var httpClient = new HttpClient();
         await httpClient.SendAsync(content);
 
         // Log the friday.
@@ -68,8 +68,8 @@ public class KoffBotFridayFunction
                 Modified = DateTime.Now,
                 ModifiedBy = "KoffBotFriday"
             };
-            _dbContext.Add(newRow);
-            _dbContext.SaveChanges();
+            await _dbContext.AddAsync(newRow);
+            await _dbContext.SaveChangesAsync();
         }
         catch (Exception e)
         {

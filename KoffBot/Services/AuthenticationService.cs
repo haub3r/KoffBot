@@ -1,5 +1,4 @@
 ﻿using Microsoft.Azure.Functions.Worker.Http;
-using Microsoft.Extensions.Logging;
 using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Text;

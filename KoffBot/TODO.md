@@ -1,3 +1,5 @@
 - Add appsettings files instead of current setting style
 - Move shared files to a designated "shared" folder and rename "Shared" file (some things related to this can be done in settings instead)
 - Take local.settings.json out of gitignore
+- Add pre-celebration messages to holiday function (day before)
+- Remove debug compiler commands and use settings file instead

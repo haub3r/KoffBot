@@ -19,6 +19,14 @@ jobs:
       - name: "Checkout GitHub Action"
         uses: actions/checkout@master
 
+      - name: Build and deploy infrastructure
+        uses: azure/arm-deploy@v1
+        with:
+          subscriptionId: dd77e804-594f-4555-b255-ddf980eba6b0
+          resourceGroupName: KoffBot
+          template: ./KoffBot/Deployment/koffbot-prod.bicep
+          failOnStdErr: false
+
       - name: Setup .NET 8
         uses: actions/setup-dotnet@master
         with:
