@@ -1,0 +1,22 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "ASPNETCORE_ENVIRONMENT": "Local",
+    "DbConnectionString": "Server=.\\SQLExpress;Database=KoffBot;Trusted_Connection=Yes;TrustServerCertificate=True;",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
+    "FUNCTIONS_EXTENSION_VERSION": "~4",
+    "OpenAiApiKey": "", // Use user secrets file in local development.
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "AzureWebJobs.KoffBotAdvertisement.Disabled": "true",
+    "AzureWebJobs.KoffBotDrunk.Disabled": "true",
+    "AzureWebJobs.KoffBotEcho.Disabled": "true",
+    "AzureWebJobs.KoffBotFriday.Disabled": "true",
+    "AzureWebJobs.KoffBotHoliday.Disabled": "false",
+    "AzureWebJobs.KoffBotPrice.Disabled": "true",
+    "AzureWebJobs.KoffBotStats.Disabled": "true",
+    "AzureWebJobs.KoffBotToast.Disabled": "true",
+    "AzureWebJobs.KoffBotUntappd.Disabled": "true",
+    "TimerTriggerScheduleFridayFunction": "0 */1 * * * *",
+    "TimerTriggerScheduleHolidayFunction": "0 */1 * * * *"
+  }
+}
