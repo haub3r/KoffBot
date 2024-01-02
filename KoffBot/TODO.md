@@ -1,4 +1,4 @@
-- Add appsettings files instead of current setting style
 - Move shared files to a designated "shared" folder and rename "Shared" file (some things related to this can be done in settings instead)
 - Add pre-celebration messages to holiday function (day before)
 - Fix errors and warnings in deployment
+- Add test project and simple tests
