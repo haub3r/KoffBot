@@ -2,3 +2,4 @@
 - Add pre-celebration messages to holiday function (day before)
 - Fix errors and warnings in deployment
 - Add test project and simple tests
+- Download holidays to DB at the start of each year and use that info instead of always getting holidays from API
