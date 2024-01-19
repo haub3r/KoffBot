@@ -66,6 +66,14 @@ var appSettings = [
     value: '@Microsoft.KeyVault(SecretUri=https://koffbot-kv.vault.azure.net/secrets/SlackWebHook/fa564c9e7bc343d885e0de7219c020ca)'
   }
   {
+    name: 'TimerTriggerScheduleFridayFunction'
+    value: '0 1 0 * * 5'
+  }
+  {
+    name: 'TimerTriggerScheduleHolidayFunction'
+    value: '0 0 0 * * *'
+  }
+  {
     name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
     value: storageConnectionString
   }

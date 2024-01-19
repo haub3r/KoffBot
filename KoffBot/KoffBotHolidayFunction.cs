@@ -17,11 +17,7 @@ public class KoffBotHolidayFunction
     }
 
     [Function("KoffBotHoliday")]
-#if DEBUG
-    public async Task Run([TimerTrigger("0 */1 * * * *")] TimerInfo myTimer)
-#else
-    public async Task Run([TimerTrigger("0 0 0 * * *")] TimerInfo myTimer)
-#endif
+    public async Task Run([TimerTrigger("%TimerTriggerScheduleHolidayFunction%")] TimerInfo myTimer)
     {
         _logger.LogInformation("KoffBot activated. Ready to check for holidays.");
 
@@ -67,7 +63,7 @@ public class KoffBotHolidayFunction
             "Vappu" => "Työläisten päivä eli vappu! Ota siis sen kunniaksi ainakin yksi Koff! (Sinebrychoff ei tunnista vappua kansalliseksi juhlapäiväksi eikä päivän nimellinen merkitys oikeuta työntekijää pitämään vapaapäivää. Poissaolo päivän aikana lasketaan työsopimuksen vastaiseksi ja voi johtaa työntekijän välittömään irtisanomiseen työtehtävistä. Tämän viestin lukeminen ei oikeuta työntekijää pitämään taukoa.)",
             "Helatorsta" => "Hyvää helatorstaita! Tällä päivällä ei ole mitään merkitystä, kuten ei sinullakaan! Aika avata yksi Koff? :koff:",
             "Juhannusaatto" => "Hyvää juhannusta! :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff: :koff:",
-            "Itsenäisyyspäivä" => "Hyvää itsenäisyyspäivää! Perhe, isänmaa ja Koff! :flag-fi: :koff: :gun:",
+            "Itsenäisyyspäivä" => "Hyvää itsenäisyyspäivää! Perhe, isänmaa ja Koff! :flag-fi: :koff: :ak47:",
             "Jouluaatto" => "Hyvää ja onnellista joulua toivottaa KoffBot! :santa: :koff:",
             "Tapaninpäivä" => "Tapaninpäivä on ensimmäisen marttyyrin Stefanoksen ja myös kaikkien muiden marttyyrien muistopäivä. Suomessa tapaninpäivästä on vuosien saatossa tullut myös hevosten ja hevosmiesten juhlapäivä. Mikä siis parempi päivä laittaa joululahjarahat oikealle hevoselle! Mene osoitteeseen unibet.com ja syötä promokoodi 'KOFFBOTSPECIAL' tienaaksesi 5$ ilmaisina vedonlyöntikrediitteinä! Koff! :koff:",
             _ => null

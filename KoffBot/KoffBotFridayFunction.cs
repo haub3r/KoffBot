@@ -18,11 +18,7 @@ public class KoffBotFridayFunction
     }
 
     [Function("KoffBotFriday")]
-#if DEBUG
-    public async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer)
-#else
-    public async Task Run([TimerTrigger("0 1 0 * * 5")] TimerInfo myTimer)
-#endif
+    public async Task Run([TimerTrigger("%TimerTriggerScheduleFridayFunction%")] TimerInfo myTimer)
     {
         _logger.LogInformation("KoffBot activated. Ready to hail friday.");
 
