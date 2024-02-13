@@ -43,7 +43,7 @@ public class KoffBotToastFunction
         catch (Exception e)
         {
             _logger.LogError("Reading from drunkedness log failed. {e}", e);
-            var result = req.CreateResponse(HttpStatusCode.OK);
+            var result = req.CreateResponse(HttpStatusCode.InternalServerError);
             result.WriteString("Reading from drunkedness log failed.");
 
             return result;
