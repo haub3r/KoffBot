@@ -47,7 +47,7 @@ public class KoffBotFridayFunction
             Text = messages[randomIndex]
         };
 
-        var content = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())
+        var content = new HttpRequestMessage(HttpMethod.Post, ResponseEndpointService.GetResponseEndpoint())
         {
             Content = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json")
         };

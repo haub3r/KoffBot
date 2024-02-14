@@ -47,7 +47,7 @@ public class KoffBotHolidayFunction
                 Text = slackMessage
             };
 
-            var content = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())
+            var content = new HttpRequestMessage(HttpMethod.Post, ResponseEndpointService.GetResponseEndpoint())
             {
                 Content = new StringContent(JsonSerializer.Serialize(message), Encoding.UTF8, "application/json")
             };

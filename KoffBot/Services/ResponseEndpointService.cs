@@ -1,6 +1,6 @@
 ﻿namespace KoffBot;
 
-public static class Shared
+public static class ResponseEndpointService
 {
     public static string LocalEnvironmentName = "Local";
     public static string SlackWebhookName = "SlackWebHook";

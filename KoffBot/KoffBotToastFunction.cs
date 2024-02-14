@@ -27,7 +27,7 @@ public class KoffBotToastFunction
     {
         _logger.LogInformation("KoffBot activated. Ready for furious toasting.");
         var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
-        if (env != Shared.LocalEnvironmentName)
+        if (env != ResponseEndpointService.LocalEnvironmentName)
         {
             await AuthenticationService.Authenticate(req);
         }
@@ -63,7 +63,7 @@ public class KoffBotToastFunction
         }
 
         using var httpClient = new HttpClient();
-        var content = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())
+        var content = new HttpRequestMessage(HttpMethod.Post, ResponseEndpointService.GetResponseEndpoint())
         {
             Content = new StringContent(JsonSerializer.Serialize(message), Encoding.UTF8, "application/json")
         };

@@ -27,7 +27,7 @@ public class KoffBotEchoFunction
         _logger.LogInformation("KoffBot activated. Ready to echo some wise words.");
 
         var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
-        if (env != Shared.LocalEnvironmentName)
+        if (env != ResponseEndpointService.LocalEnvironmentName)
         {
             await AuthenticationService.Authenticate(req);
         }
@@ -53,7 +53,7 @@ public class KoffBotEchoFunction
             Text = userMessage
         };
 
-        var content = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())
+        var content = new HttpRequestMessage(HttpMethod.Post, ResponseEndpointService.GetResponseEndpoint())
         {
             Content = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json")
         };

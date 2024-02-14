@@ -26,7 +26,7 @@ public class KoffBotAdvertisementFunction
         _logger.LogInformation("KoffBot activated. Ready to advertise using AI.");
 
         var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
-        if (env != Shared.LocalEnvironmentName)
+        if (env != ResponseEndpointService.LocalEnvironmentName)
         {
             await AuthenticationService.Authenticate(req);
         }
@@ -70,7 +70,7 @@ public class KoffBotAdvertisementFunction
             Text = responseMessage
         };
 
-        var slackRequest = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())
+        var slackRequest = new HttpRequestMessage(HttpMethod.Post, ResponseEndpointService.GetResponseEndpoint())
         {
             Content = new StringContent(JsonSerializer.Serialize(slackDto), Encoding.UTF8, "application/json")
         };
