@@ -1,4 +1,6 @@
 using KoffBot.Database;
+using KoffBot.Dtos;
+using KoffBot.Messages;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using System.Text;
@@ -45,7 +47,7 @@ public class KoffBotFridayFunction
             Text = messages[randomIndex]
         };
 
-        var content = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())
+        var content = new HttpRequestMessage(HttpMethod.Post, ResponseEndpointService.GetResponseEndpoint())
         {
             Content = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json")
         };

@@ -1,4 +1,6 @@
-﻿using Microsoft.Azure.Functions.Worker;
+﻿using KoffBot.Dtos;
+using KoffBot.Services;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using System.Net;
@@ -23,7 +25,7 @@ public class KoffBotUntappdFunction
         _logger.LogInformation("KoffBot activated. Ready to advertise Untappd.");
 
         var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
-        if (env != Shared.LocalEnvironmentName)
+        if (env != ResponseEndpointService.LocalEnvironmentName)
         {
             await AuthenticationService.Authenticate(req);
         }
@@ -34,7 +36,7 @@ public class KoffBotUntappdFunction
             Text = "Muista, että voit arvostella Koffin Untappd-sovelluksessa. Sovelluksen saa osoitteesta: www.untappd.com. Annathan Koffille viisi tähteä :koff:"
         };
 
-        var content = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())
+        var content = new HttpRequestMessage(HttpMethod.Post, ResponseEndpointService.GetResponseEndpoint())
         {
             Content = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json")
         };

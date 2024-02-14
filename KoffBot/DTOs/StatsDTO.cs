@@ -1,4 +1,4 @@
-﻿namespace KoffBot;
+﻿namespace KoffBot.Dtos;
 
 public class StatsDto
 {

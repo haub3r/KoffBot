@@ -1,4 +1,4 @@
-﻿namespace KoffBot;
+﻿namespace KoffBot.Messages;
 
 public static class FridayMessages
 {

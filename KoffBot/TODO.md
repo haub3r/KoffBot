@@ -1,5 +1,5 @@
-- Move shared files to a designated "shared" folder and rename "Shared" file (some things related to this can be done in settings instead)
 - Add pre-celebration messages to holiday function (day before)
 - Fix errors and warnings in deployment
 - Add test project and simple tests
 - Download holidays to DB at the start of each year and use that info instead of always getting holidays from API
+- Add manual adding of webbitiimi-events and reminders for them

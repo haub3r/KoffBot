@@ -1,4 +1,6 @@
 using KoffBot.Database;
+using KoffBot.Dtos;
+using KoffBot.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
@@ -26,7 +28,7 @@ public class KoffBotDrunkFunction
         _logger.LogInformation("KoffBot activated. Ready to get rip-roaring drunk.");
         
         var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
-        if (env != Shared.LocalEnvironmentName)
+        if (env != ResponseEndpointService.LocalEnvironmentName)
         {
             await AuthenticationService.Authenticate(req);
         }
@@ -38,7 +40,7 @@ public class KoffBotDrunkFunction
             Text = "KoffBot drank some delicious Koff beer and is now in 'Drunk Mode' for the next hour. Toasting will be difficult."
         };
 
-        var content = new HttpRequestMessage(HttpMethod.Post, Shared.GetResponseEndpoint())
+        var content = new HttpRequestMessage(HttpMethod.Post, ResponseEndpointService.GetResponseEndpoint())
         {
             Content = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json")
         };

@@ -3,7 +3,7 @@ using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace KoffBot;
+namespace KoffBot.Services;
 
 public static class AuthenticationService
 {

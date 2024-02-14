@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace KoffBot;
+namespace KoffBot.Dtos;
 
 public class ToastSlackMessageDto
 {
