@@ -37,7 +37,7 @@ jobs:
         run: dotnet test --configuration Release
 
       - name: "Publish .NET Project"
-        run: dotnet publish --configuration Release
+        run: dotnet publish --configuration Release --output ./publish
 
       - name: "Run EF migrations"
         run: |
@@ -50,4 +50,5 @@ jobs:
         id: fa
         with:
           app-name: koffbot
+          package: ./publish
           publish-profile: "${{ secrets.AZURE_PUBLISH_PROFILE_PROD }}"
