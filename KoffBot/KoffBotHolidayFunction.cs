@@ -40,7 +40,7 @@ public class KoffBotHolidayFunction
                 continue;
             }
 
-            var foundHoliday = HolidayMessages.HolidayPossibilities.Where(m => m.Key == holiday.Name).FirstOrDefault();
+            var foundHoliday = HolidayMessages.HolidayPossibilities.Where(m => m.Key == holiday.Name).SingleOrDefault();
             var slackMessage = foundHoliday.Value ?? "";
             var message = new HolidaySlackMessageDto
             {
