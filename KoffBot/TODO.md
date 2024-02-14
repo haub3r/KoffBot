@@ -3,3 +3,5 @@
 - Fix errors and warnings in deployment
 - Add test project and simple tests
 - Download holidays to DB at the start of each year and use that info instead of always getting holidays from API
+- Add manual adding of webbitiimi-events and reminders for them
+- Move holiday messages to own file

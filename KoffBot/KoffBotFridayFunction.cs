@@ -1,4 +1,6 @@
 using KoffBot.Database;
+using KoffBot.Dtos;
+using KoffBot.Messages;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using System.Text;

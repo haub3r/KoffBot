@@ -1,4 +1,6 @@
 using KoffBot.Database;
+using KoffBot.Dtos;
+using KoffBot.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
