@@ -1,6 +1,9 @@
 @description('Resource location. Default value is resource group\'s location.')
 param location string = resourceGroup().location
 
+@description('Key Vault base URL to avoid GitHub warnings.')
+param keyVaultBaseUrl string
+
 resource functionStorage 'Microsoft.Storage/storageAccounts@2021-04-01' = {
   name: 'storageaccountkoffbab19'
   location: location
@@ -43,7 +46,7 @@ var appSettings = [
   }
   {
     name: 'DbConnectionString'
-    value: '@Microsoft.KeyVault(SecretUri=https://koffbot-kv.vault.azure.net/secrets/DbConnectionString/e96d10b1562c440cae2f85ed87b6fd03)'
+    value: '@Microsoft.KeyVault(SecretUri=${keyVaultBaseUrl}/secrets/DbConnectionString/e96d10b1562c440cae2f85ed87b6fd03)'
   }
   {
     name: 'FUNCTIONS_EXTENSION_VERSION'
@@ -55,15 +58,15 @@ var appSettings = [
   }
   {
     name: 'OpenAiApiKey'
-    value: '@Microsoft.KeyVault(SecretUri=https://koffbot-kv.vault.azure.net/secrets/OpenAiApiKey/6ec78a313d5847c9be18b50bd3ba0f30)'
+    value: '@Microsoft.KeyVault(SecretUri=${keyVaultBaseUrl}/secrets/OpenAiApiKey/6ec78a313d5847c9be18b50bd3ba0f30)'
   }
   {
     name: 'SlackSigningSecret'
-    value: '@Microsoft.KeyVault(SecretUri=https://koffbot-kv.vault.azure.net/secrets/SlackSigningSecret/49579046017048a8a91486abc1cd4d99)'
+    value: '@Microsoft.KeyVault(SecretUri=${keyVaultBaseUrl}/secrets/SlackSigningSecret/49579046017048a8a91486abc1cd4d99)'
   }
   {
     name: 'SlackWebHook'
-    value: '@Microsoft.KeyVault(SecretUri=https://koffbot-kv.vault.azure.net/secrets/SlackWebHook/fa564c9e7bc343d885e0de7219c020ca)'
+    value: '@Microsoft.KeyVault(SecretUri=${keyVaultBaseUrl}/secrets/SlackWebHook/fa564c9e7bc343d885e0de7219c020ca)'
   }
   {
     name: 'TimerTriggerScheduleFridayFunction'

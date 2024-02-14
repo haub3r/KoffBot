@@ -25,6 +25,7 @@ jobs:
           subscriptionId: dd77e804-594f-4555-b255-ddf980eba6b0
           resourceGroupName: KoffBot
           template: ./KoffBot/Deployment/koffbot-prod.bicep
+          parameters: "keyVaultBaseUrl=https://koffbot-kv.vault.azure.net"
           failOnStdErr: false
 
       - name: Setup .NET 8
