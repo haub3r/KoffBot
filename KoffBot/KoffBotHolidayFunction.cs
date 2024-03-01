@@ -31,6 +31,12 @@ public class KoffBotHolidayFunction
         var json = await response.Content.ReadAsStringAsync();
 
         var holidays = JsonSerializer.Deserialize<HolidayInboundApiDto>(json);
+        holidays.SpecialDates.Add(new HolidayInboundApiDetailsDto
+        {
+            Date = $"14.10.{DateTime.Now.Year}",
+            Name = "KoffBotSyntymäpäivä"
+        });
+
         var today = DateTime.Today;
         foreach (var holiday in holidays.SpecialDates)
         {
