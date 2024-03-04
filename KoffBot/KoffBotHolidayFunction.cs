@@ -59,7 +59,7 @@ public class KoffBotHolidayFunction
             var slackWebHook = _config["SlackWebHook"];
             if (string.IsNullOrEmpty(slackWebHook))
             {
-                slackWebHook = ResponseEndpointService.GetResponseEndpoint(); 
+                slackWebHook = ResponseEndpointService.GetResponseEndpoint();
             }
 
             var content = new HttpRequestMessage(HttpMethod.Post, slackWebHook)
