@@ -11,7 +11,7 @@
     "AzureWebJobs.KoffBotDrunk.Disabled": "true",
     "AzureWebJobs.KoffBotEcho.Disabled": "true",
     "AzureWebJobs.KoffBotFriday.Disabled": "true",
-    "AzureWebJobs.KoffBotHoliday.Disabled": "true",
+    "AzureWebJobs.KoffBotHoliday.Disabled": "false",
     "AzureWebJobs.KoffBotPrice.Disabled": "true",
     "AzureWebJobs.KoffBotStats.Disabled": "true",
     "AzureWebJobs.KoffBotToast.Disabled": "true",
