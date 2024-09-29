@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace KoffBot.Dtos;
+namespace KoffBot.Models;
 
-public class DrunkSlackMessageDto
+public class PriceSlackMessage
 {
     [JsonPropertyName("text")]
     public string Text { get; set; }

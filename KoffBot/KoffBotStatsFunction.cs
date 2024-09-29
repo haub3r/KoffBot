@@ -1,5 +1,5 @@
 using KoffBot.Database;
-using KoffBot.Dtos;
+using KoffBot.Models;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +19,7 @@ public class KoffBotStatsFunction
     }
 
     [Function("KoffBotStats")]
-    public async Task<StatsDto> Run(
+    public async Task<Stats> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequestData req)
     {
         _logger.LogInformation("KoffBot activated. Ready to retrieve epic statistics.");
@@ -27,12 +27,12 @@ public class KoffBotStatsFunction
         // Get the stats.
         try
         {
-            var result = new StatsDto();
+            var result = new Stats();
             var drunkCount = await _dbContext.LogDrunks.CountAsync();
             var fridayCount = await _dbContext.LogFridays.CountAsync();
             var toastCount = await _dbContext.LogToasts.CountAsync();
 
-            return new StatsDto
+            return new Stats
             {
                 DrunkCount = drunkCount,
                 FridayCount = fridayCount,

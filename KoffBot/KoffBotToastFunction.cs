@@ -1,5 +1,5 @@
 using KoffBot.Database;
-using KoffBot.Dtos;
+using KoffBot.Models;
 using KoffBot.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
@@ -52,7 +52,7 @@ public class KoffBotToastFunction
         }
 
         // Send message to Slack channel.
-        var message = new ToastSlackMessageDto()
+        var message = new ToastSlackMessage()
         {
             Text = "Koff!"
         };

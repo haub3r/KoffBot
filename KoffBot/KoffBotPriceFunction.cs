@@ -1,5 +1,5 @@
 ﻿using KoffBot.Database;
-using KoffBot.Dtos;
+using KoffBot.Models;
 using KoffBot.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
@@ -72,7 +72,7 @@ public class KoffBotPriceFunction
         var fullMessage = $"Koff-tölkin hinta tänään: {price}€{Environment.NewLine}Edellisen tarkistuksen aikainen hinta: {lastPrice}€{Environment.NewLine}{Environment.NewLine}{message}";
 
         // Send message to Slack channel.
-        var dto = new PriceSlackMessageDto
+        var dto = new PriceSlackMessage
         {
             Text = fullMessage,
         };

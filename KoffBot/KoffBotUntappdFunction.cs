@@ -1,4 +1,4 @@
-﻿using KoffBot.Dtos;
+﻿using KoffBot.Models;
 using KoffBot.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
@@ -31,7 +31,7 @@ public class KoffBotUntappdFunction
         }
 
         using var httpClient = new HttpClient();
-        var dto = new UntappdSlackMessageDto
+        var dto = new UntappdSlackMessage
         {
             Text = "Muista, että voit arvostella Koffin Untappd-sovelluksessa. Sovelluksen saa osoitteesta: www.untappd.com. Annathan Koffille viisi tähteä :koff:"
         };

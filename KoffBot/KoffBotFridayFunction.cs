@@ -1,5 +1,5 @@
 using KoffBot.Database;
-using KoffBot.Dtos;
+using KoffBot.Models;
 using KoffBot.Messages;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
@@ -42,7 +42,7 @@ public class KoffBotFridayFunction
 
         Random random = new();
         int randomIndex = random.Next(0, messages.Length);
-        var dto = new FridaySlackMessageDto
+        var dto = new FridaySlackMessage
         {
             Text = messages[randomIndex]
         };
