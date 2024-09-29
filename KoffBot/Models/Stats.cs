@@ -1,6 +1,6 @@
-﻿namespace KoffBot.Dtos;
+﻿namespace KoffBot.Models;
 
-public class StatsDto
+public class Stats
 {
     public int FridayCount { get; set; }
     public int ToastCount { get; set; }

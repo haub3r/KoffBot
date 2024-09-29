@@ -1,4 +1,4 @@
-using KoffBot.Dtos;
+using KoffBot.Models;
 using KoffBot.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
@@ -18,7 +18,7 @@ public class KoffBotAdvertisementFunction
         _logger = loggerFactory.CreateLogger<KoffBotAdvertisementFunction>();
     }
 
-    // For this function to work, we need to buy OpenAI API access again.
+    // For this function to work, we would need to buy OpenAI API access again.
     [Function("KoffBotAdvertisement")]
     public async Task Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequestData req)
@@ -41,7 +41,7 @@ public class KoffBotAdvertisementFunction
         string responseMessage = "";
         try
         {
-            var aiDto = new AiRequestDto
+            var aiDto = new AiRequest
             {
                 MaxTokens = 150,
                 Model = "text-davinci-002",
@@ -55,7 +55,7 @@ public class KoffBotAdvertisementFunction
             aiRequest.Headers.Add("Authorization", Environment.GetEnvironmentVariable("OpenAiApiKey"));
             var response = await httpClient.SendAsync(aiRequest);
             var responseContent = await response.Content.ReadAsStringAsync();
-            var parsed = JsonSerializer.Deserialize<AiResponseDto>(responseContent);
+            var parsed = JsonSerializer.Deserialize<AiResponse>(responseContent);
             responseMessage = parsed.Choices.First().Text;
         }
         catch (Exception e)
@@ -65,7 +65,7 @@ public class KoffBotAdvertisementFunction
         }
 
         // Send message to Slack channel.
-        var slackDto = new PriceSlackMessageDto
+        var slackDto = new PriceSlackMessage
         {
             Text = responseMessage
         };

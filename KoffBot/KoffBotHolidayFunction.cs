@@ -1,4 +1,4 @@
-﻿using KoffBot.Dtos;
+﻿using KoffBot.Models;
 using KoffBot.Messages;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
@@ -31,10 +31,10 @@ public class KoffBotHolidayFunction
 
         var finnishHolidaysEndpoint = $"https://api.boffsaopendata.fi/bankingcalendar/v1/api/v1/BankHolidays?year={DateTime.Now.Year}&pageNumber=1&pageSize=50";
         var response = await httpClient.GetAsync(finnishHolidaysEndpoint);
-        var json = await response.Content.ReadAsStringAsync();
+        var responseJson = await response.Content.ReadAsStringAsync();
 
-        var holidays = JsonSerializer.Deserialize<HolidayInboundApiDto>(json);
-        holidays.SpecialDates.Add(new HolidayInboundApiDetailsDto
+        var holidays = JsonSerializer.Deserialize<HolidayApiResponse>(responseJson);
+        holidays.SpecialDates.Add(new HolidayApiResponseDetails
         {
             Date = $"14.10.{DateTime.Now.Year}",
             Name = "KoffBotSyntymäpäivä"
@@ -51,7 +51,7 @@ public class KoffBotHolidayFunction
 
             var foundHoliday = HolidayMessages.HolidayPossibilities.Where(m => m.Key == holiday.Name).SingleOrDefault();
             var slackMessage = foundHoliday.Value ?? "";
-            var message = new HolidaySlackMessageDto
+            var message = new HolidaySlackMessage
             {
                 Text = slackMessage
             };

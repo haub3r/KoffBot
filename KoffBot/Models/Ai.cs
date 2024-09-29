@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace KoffBot.Dtos;
+namespace KoffBot.Models;
 
-public class AiRequestDto
+public class AiRequest
 {
     [JsonPropertyName("model")]
     public string Model { get; set; }
@@ -17,13 +17,13 @@ public class AiRequestDto
     public int MaxTokens { get; set; }
 }
 
-public class AiResponseDto
+public class AiResponse
 {
     [JsonPropertyName("choices")]
-    public List<AiResponseChoicesDto> Choices { get; set; }
+    public List<AiResponseChoices> Choices { get; set; }
 }
 
-public class AiResponseChoicesDto
+public class AiResponseChoices
 {
     [JsonPropertyName("text")]
     public string Text { get; set; }

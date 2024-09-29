@@ -1,4 +1,4 @@
-﻿using KoffBot.Dtos;
+﻿using KoffBot.Models;
 using KoffBot.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
@@ -50,7 +50,7 @@ public class KoffBotEchoFunction
         }
 
         using var httpClient = new HttpClient();
-        var dto = new EchoSlackMessageDto
+        var dto = new EchoSlackMessage
         {
             Text = userMessage
         };

@@ -1,14 +1,14 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace KoffBot.Dtos;
+namespace KoffBot.Models;
 
-public class HolidayInboundApiDto
+public class HolidayApiResponse
 {
     [JsonPropertyName("specialDates")]
-    public List<HolidayInboundApiDetailsDto> SpecialDates { get; set; }
+    public List<HolidayApiResponseDetails> SpecialDates { get; set; }
 }
 
-public class HolidayInboundApiDetailsDto
+public class HolidayApiResponseDetails
 {
     [JsonPropertyName("date")]
     public string Date { get; set; }

@@ -1,5 +1,5 @@
 using KoffBot.Database;
-using KoffBot.Dtos;
+using KoffBot.Models;
 using KoffBot.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
@@ -35,7 +35,7 @@ public class KoffBotDrunkFunction
 
         // Send message to Slack channel.
         using var httpClient = new HttpClient();
-        var dto = new DrunkSlackMessageDto
+        var dto = new DrunkSlackMessage
         {
             Text = "KoffBot drank some delicious Koff beer and is now in 'Drunk Mode' for the next hour. Toasting will be difficult."
         };
