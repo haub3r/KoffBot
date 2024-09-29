@@ -3,17 +3,27 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-var host = Host.CreateDefaultBuilder(args)
-    .ConfigureFunctionsWorkerDefaults(builder =>
-    {
-        builder.UseDefaultWorkerMiddleware();
-    })
-    .ConfigureServices((hostContext, services) =>
-    {
-        var connectionString = Environment.GetEnvironmentVariable("DbConnectionString");
-        services.AddDbContext<KoffBotContext>(options =>
-            options.UseSqlServer(connectionString));
-    })
-    .Build();
+namespace KoffBot;
 
-await host.RunAsync();
+public class Program
+{
+    private static async Task Main(string[] args)
+    {
+        await CreateHostBuilder(args).Build().RunAsync();
+    }
+
+    public static IHostBuilder CreateHostBuilder(string[] args)
+    {
+        return Host.CreateDefaultBuilder(args)
+            .ConfigureFunctionsWorkerDefaults(builder =>
+            {
+                builder.UseDefaultWorkerMiddleware();
+            })
+            .ConfigureServices((hostContext, services) =>
+            {
+                var connectionString = Environment.GetEnvironmentVariable("DbConnectionString");
+                services.AddDbContext<KoffBotContext>(options =>
+                    options.UseSqlServer(connectionString));
+            });
+    }
+}
