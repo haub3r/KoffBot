@@ -1,0 +1,54 @@
+name: Build and deploy KoffBot Development Function App to Azure
+
+on:
+  push:
+    branches:
+      - feature/*
+
+jobs:
+  build-and-deploy:
+    name: Build and deploy KoffBot Dev
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Login via Azure CLI"
+        uses: Azure/login@v1.6.1
+        with:
+          creds: "${{ secrets.AZURE_CREDENTIALS_DEV }}"
+
+      - name: "Checkout GitHub Action"
+        uses: actions/checkout@master
+
+      - name: Build and deploy infrastructure
+        uses: azure/arm-deploy@v2
+        with:
+          subscriptionId: dd77e804-594f-4555-b255-ddf980eba6b0
+          resourceGroupName: KoffBot-Dev
+          template: ./KoffBot/Deployment/koffbot-dev.bicep
+          parameters: "keyVaultBaseUrl=https://koffbot-dev-kv.vault.azure.net"
+          failOnStdErr: false
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@master
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: "Run .NET Tests"
+        run: dotnet test --configuration Release
+
+      - name: "Publish .NET Project"
+        run: dotnet publish --configuration Release --output ./publish
+
+      - name: "Run EF migrations"
+        run: |
+          dotnet tool install --global dotnet-ef
+          dotnet tool restore
+          dotnet ef database update --project KoffBot --connection "${{ secrets.AZURE_DBCONNECTIONSTRING_DEV }}"
+
+      - name: "Run Azure Functions Action"
+        uses: Azure/functions-action@v1.5.1
+        id: fa
+        with:
+          app-name: koffbot-dev
+          package: ./publish
+          publish-profile: "${{ secrets.AZURE_PUBLISH_PROFILE_DEV }}"
