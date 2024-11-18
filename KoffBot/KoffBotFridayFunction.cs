@@ -24,20 +24,30 @@ public class KoffBotFridayFunction
     {
         _logger.LogInformation("KoffBot activated. Ready to hail friday.");
 
-        var messages = FridayMessages.FridayPossibilities;
+        string[] messages = [];
 
-        // Add season specific messages to message pool.
-        if (DateTime.Now.Month >= 11 || DateTime.Now.Month <= 3)
+        // Check for friday the 13.
+        if (DateTime.Now.Day == 13)
         {
-            messages = [.. messages, .. FridayMessages.FridayPossibilitiesWinter];
+            messages = FridayMessages.Friday13Possibilities;
         }
-
-        if (DateTime.Now.Month == 6 
-            || DateTime.Now.Month == 7
-            || DateTime.Now.Month == 8
-            || DateTime.Now.Month == 9)
+        else
         {
-            messages = [.. messages, .. FridayMessages.FridayPossibilitiesSummer];
+            messages = FridayMessages.NormalFridayPossibilities;
+            
+            // Add season specific messages to message pool.
+            if (DateTime.Now.Month >= 11 || DateTime.Now.Month <= 3)
+            {
+                messages = [.. messages, .. FridayMessages.NormalFridayPossibilitiesWinter];
+            }
+
+            if (DateTime.Now.Month == 6
+                || DateTime.Now.Month == 7
+                || DateTime.Now.Month == 8
+                || DateTime.Now.Month == 9)
+            {
+                messages = [.. messages, .. FridayMessages.NormalFridayPossibilitiesSummer];
+            }
         }
 
         Random random = new();

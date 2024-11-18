@@ -2,7 +2,7 @@
 
 public static class FridayMessages
 {
-    public static string[] FridayPossibilities =
+    public static string[] NormalFridayPossibilities =
     [
         "Se on perjantai! :meow_party: Mikset juhlisi ottamalla Koff! :koff:",
         "Perjantai! :koff: :koff: :koff:",
@@ -14,7 +14,6 @@ public static class FridayMessages
         "Arvatkaas mikä päivä tänään on? No tietysti perjantai! Koff!",
         "Perjantai, perjantai, perjantai. Perjantai! :koff:",
         "Muistatteko 90-luvun radiopätkän: 'Miksei aina voi olla perjantai?' Niinpä! :koff: :koff: :koff:",
-        "Perjantai 13. päivä vuonna 1307 oli synkkä temppeliherrojen ritarikunnalle. Heidät vangittiin ja lähes kaikkia kidutettiin brutaalisti. Yksi yleisimmistä tämän ajan metodeista oli ns. 'Strappdo': Kidutettava nostettiin ilmaan pelkkien ranteidensa varassa kunnes heidän olkapäänsä popsahtivat irti luu-aukoistaan. Lopuksi temppeliritarit poltettiin roviolla. Liekeissä heille olisi varmasti maistunut yksi janon sammuttava Koff! :koff:",
         "Perjantai, eli: :koff: K :koff: O :koff: F :koff: F :koff:",
         "Perjantai! Onko se aftereille, keikalle vai yökerholle? Sen kaiken kertoo :koff:",
         "Perjantai! :koff: Perjantai! :koff: Perjantai!!! :koff: :koff: :koff:",
@@ -23,13 +22,14 @@ public static class FridayMessages
         "Perjantai! Iiro, oletko toimistolla? Baarit joihin on vähemmän kuin 100 askelta: Barski, Kitty's, Praha, Vltava, Ooster. :koff:",
         "Perjantai! Jos olet toimistolla, muista matkalla kotiin käydä hakemassa kaupasta Koff! Jos olet kotona, hae kaupasta Koff!",
         "Perjantai! Mutta perjantai ei ole perjantai ilman olutta. Avaa siis illan ensimmäinen janon sammuttava Koff! :koff:",
-        "Aloita viikonloppu oikein – nauti perjantaina raikas ja kylmä Koff!",
-        "Tänään on perjantai! Rahahuolia? Meillä on sinulle sijoituskohde! Koffin hinta on noussut vuoden 2021 kurssista '1,60€' -> vuoden 2024 kurssiin '1,80€'! Koff! :koff:",
+        "Aloita viikonloppu oikein – nauti perjantaina raikas ja kylmä Koff! :koff:",
+        "Tänään on perjantai! Rahahuolia? Meillä on sinulle sijoituskohde! Koffin hinta on noussut vuoden 2021 kurssista '1,60€' -> vuoden 2025 kurssiin '1,80€'! Koff! :koff:",
         "Perjantai! Sampsa, alakerrassa on Alko, K-Supermarket ja baari. Miksei kädessäsi ole jo jääkylmä ja janon sammuttava Koff! :koff:",
+        "Vietäthän terveellisen perjantain, kävely lähikauppaan lisää ihmisen päivittäiseen askelmäärään keskimäärin noin 1500 askelta. Lähikaupasta löydät myös runsaasti B12-vitamiinia sisältävän lavan Koffia! Koff! :koff:",
         "Perjantai on työpäivä. Töiden jälkeen kelpaa raikas ja janon sammuttava Koff!"
     ];
 
-    public static string[] FridayPossibilitiesWinter =
+    public static string[] NormalFridayPossibilitiesWinter =
     [
         "Talvi on synkkä ja kylmä. Piristä mieltäsi ottamalla Koff! :koff:",
         "Ulkona on pimeä :new_moon_with_face: Koff tuo valoa tähänkin perjantaihin (ja elämään)! :koff:",
@@ -38,12 +38,19 @@ public static class FridayMessages
         "ChatGPT:n suusta: \"Perjantai ja Koff, kaksi asiaa jotka ovat yhtä odotettuja kuin joulupukki jouluaattona... Tai no, ainakin jos pukki toisi Koffia lahjaksi.\" No niinpä! Koff! :koff:"
     ];
 
-    public static string[] FridayPossibilitiesSummer =
+    public static string[] NormalFridayPossibilitiesSummer =
     [
         "Perjantai! Aurinko paistaa, uimarannat ovat täynnä ja janon sammuttaa :koff: :koff: :koff: :koff: :koff:",
         "Helteillä auttaa jääkylmä Koff! Nyt on perjantai, mikset ole jo korkannut?",
         "Paras virvoike kesän kuumuuteen: ~Lonkero~ Koff! :koff:",
         "Perjantai! Helteisiin on taas kuollut ihmisiä, pysykää nesteytettynä! Mikä siihen parempi tapa kuin ottaa janon sammuttava Koff!",
         "ChatGPT:n suusta: \"Perjantai ja Koff, ne ovat kuin juhannussää: aina yhtä pettymys, mutta silti niitä odottaa innolla.\" AI on asioiden äärellä! Koff! :koff:"
+    ];
+
+    public static string[] Friday13Possibilities =
+    [
+        "Perjantai 13. päivä vuonna 1307 oli synkkä temppeliherrojen ritarikunnalle. Heidät vangittiin ja lähes kaikkia kidutettiin brutaalisti. Yksi yleisimmistä tämän ajan metodeista oli ns. 'Strappdo': Kidutettava nostettiin ilmaan pelkkien ranteidensa varassa kunnes heidän olkapäänsä popsahtivat irti luu-aukoistaan. Lopuksi temppeliritarit poltettiin roviolla. Liekeissä heille olisi varmasti maistunut yksi janon sammuttava Koff! :koff:",
+        "Perjantai 13. päivä :jason: :knife: Kunnioita synkkää päivää ja katso vaikka kauhuelokuva! Leffajuomaksi kelpaa erinomaisesti janon sammuttava Koff! :koff:",
+        "Perjantai ja vielä 13. päivä! Aika nauttia kaikkien tänä päivänä teloitettujen kunniaksi muutama raikas Koff! Mutta älä kurkkaa sisään vaatekaappiisi :jason: :knife: :koff:",
     ];
 }
