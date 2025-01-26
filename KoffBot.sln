@@ -1,9 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35527.113 d17.12
+VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KoffBot", "KoffBot\KoffBot.csproj", "{DD93C2E0-7A96-4D9E-B122-8663AD14629A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GitHub Actions", "GitHub Actions", "{20FF8794-05C1-42D8-8F7D-DAA1513F26CB}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\koffbot-dev.yml = .github\workflows\koffbot-dev.yml
+		.github\workflows\koffbot-prod.yml = .github\workflows\koffbot-prod.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
