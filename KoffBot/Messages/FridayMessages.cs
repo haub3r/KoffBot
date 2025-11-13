@@ -19,11 +19,11 @@ public static class FridayMessages
         "Perjantai! :koff: Perjantai! :koff: Perjantai!!! :koff: :koff: :koff:",
         "Onko taas mennyt liian vähän kaljaa? Älä sure, tänään on perjantai! Koff! :koff:",
         "Perjantain olutarvostelu: Karhu - 1/10 :nauseated_face: --- Koff - 10/10 :star-struck:",
-        "Perjantai! Iiro, oletko toimistolla? Baarit joihin on vähemmän kuin 100 askelta: Barski, Kitty's, Praha, Vltava, Ooster. :koff:",
+        "Perjantai! Iiro, oletko toimistolla? Baarit joihin on vähemmän kuin 100 askelta: Kitty's, Praha, Vltava. :koff:",
         "Perjantai! Jos olet toimistolla, muista matkalla kotiin käydä hakemassa kaupasta Koff! Jos olet kotona, hae kaupasta Koff!",
         "Perjantai! Mutta perjantai ei ole perjantai ilman olutta. Avaa siis illan ensimmäinen janon sammuttava Koff! :koff:",
         "Aloita viikonloppu oikein – nauti perjantaina raikas ja kylmä Koff! :koff:",
-        "Tänään on perjantai! Rahahuolia? Meillä on sinulle sijoituskohde! Koffin hinta on noussut vuoden 2021 kurssista '1,60€' -> vuoden 2025 kurssiin '1,80€'! Koff! :koff:",
+        $"Tänään on perjantai! Rahahuolia? Meillä on sinulle sijoituskohde! Koffin hinta on noussut vuoden 2021 kurssista '1,60€' -> vuoden {DateTime.Now.Year} kurssiin '1,80€'! Koff! :koff:",
         "Perjantai! Sampsa, alakerrassa on Alko, K-Supermarket ja baari. Miksei kädessäsi ole jo jääkylmä ja janon sammuttava Koff! :koff:",
         "Vietäthän terveellisen perjantain, kävely lähikauppaan lisää ihmisen päivittäiseen askelmäärään keskimäärin noin 1500 askelta. Lähikaupasta löydät myös runsaasti B12-vitamiinia sisältävän lavan Koffia! Koff! :koff:",
         "Perjantai on työpäivä. Töiden jälkeen kelpaa raikas ja janon sammuttava Koff!"
