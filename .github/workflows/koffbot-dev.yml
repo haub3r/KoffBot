@@ -31,7 +31,7 @@ jobs:
       - name: Setup .NET 9
         uses: actions/setup-dotnet@master
         with:
-          dotnet-version: "9.0.x"
+          dotnet-version: "9.x.x"
 
       - name: "Run .NET Tests"
         run: dotnet test --configuration Release
