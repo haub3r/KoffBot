@@ -34,7 +34,7 @@ public class BlobStorageService
         return results;
     }
 
-    public async Task<T?> GetLatestAsync<T>(string containerName) where T : DefaultLog
+    public async Task<T> GetLatestAsync<T>(string containerName) where T : DefaultLog
     {
         var all = await GetAllAsync<T>(containerName);
         return all.OrderByDescending(x => x.Created).FirstOrDefault();
