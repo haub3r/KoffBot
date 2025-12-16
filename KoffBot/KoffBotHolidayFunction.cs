@@ -1,10 +1,13 @@
 ﻿using KoffBot.Models;
+using KoffBot.Models.Messages;
 using KoffBot.Messages;
+using KoffBot.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 
@@ -64,7 +67,7 @@ public class KoffBotHolidayFunction
 
             var content = new HttpRequestMessage(HttpMethod.Post, slackWebHook)
             {
-                Content = new StringContent(JsonSerializer.Serialize(message), Encoding.UTF8, "application/json")
+                Content = new StringContent(JsonSerializer.Serialize(message), Encoding.UTF8, new MediaTypeHeaderValue("application/json"))
             };
             await httpClient.SendAsync(content);
             break;
