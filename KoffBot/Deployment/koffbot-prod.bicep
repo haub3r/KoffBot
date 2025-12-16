@@ -45,8 +45,8 @@ var appSettings = [
     value: storageConnectionString
   }
   {
-    name: 'DbConnectionString'
-    value: '@Microsoft.KeyVault(SecretUri=${keyVaultBaseUrl}/secrets/DbConnectionString/e96d10b1562c440cae2f85ed87b6fd03)'
+    name: 'BlobStorageConnectionString'
+    value: storageConnectionString
   }
   {
     name: 'FUNCTIONS_EXTENSION_VERSION'

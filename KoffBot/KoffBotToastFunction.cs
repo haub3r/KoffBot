@@ -1,4 +1,3 @@
-using KoffBot.Database;
 using KoffBot.Models;
 using KoffBot.Services;
 using Microsoft.Azure.Functions.Worker;
@@ -12,12 +11,12 @@ namespace KoffBot;
 
 public class KoffBotToastFunction
 {
-    private readonly KoffBotContext _dbContext;
+    private readonly BlobStorageService _storageService;
     private readonly ILogger _logger;
 
-    public KoffBotToastFunction(KoffBotContext dbContext, ILoggerFactory loggerFactory)
+    public KoffBotToastFunction(BlobStorageService storageService, ILoggerFactory loggerFactory)
     {
-        _dbContext = dbContext;
+        _storageService = storageService;
         _logger = loggerFactory.CreateLogger<KoffBotToastFunction>();
     }
 
@@ -36,8 +35,8 @@ public class KoffBotToastFunction
         var drunkMode = false;
         try
         {
-            var lastDrunk = _dbContext.LogDrunks.OrderByDescending(d => d.Created)?.FirstOrDefault().Created;
-            if (lastDrunk != null && DateTime.UtcNow < lastDrunk?.AddHours(1))
+            var lastDrunk = await _storageService.GetLatestAsync<DefaultLog>(StorageContainers.LogDrunk);
+            if (lastDrunk != null && DateTime.UtcNow < lastDrunk.Created.AddHours(1))
             {
                 drunkMode = true;
             }
@@ -72,15 +71,14 @@ public class KoffBotToastFunction
         // Log the toasting.
         try
         {
-            var newRow = new LogToast
+            var newRow = new DefaultLog
             {
                 Created = DateTime.Now,
                 CreatedBy = "KoffBotToast",
                 Modified = DateTime.Now,
                 ModifiedBy = "KoffBotToast"
             };
-            await _dbContext.AddAsync(newRow);
-            await _dbContext.SaveChangesAsync();
+            await _storageService.AddAsync(StorageContainers.LogToast, newRow);
         }
         catch (Exception e)
         {
@@ -96,11 +94,11 @@ public class KoffBotToastFunction
 
     private static string ScrambleWord(string str)
     {
-        var rand = new Random(); 
+        var rand = new Random();
         var list = new SortedList<int, char>();
         foreach (var c in str)
             list.Add(rand.Next(), c);
-        
+
         return new string(list.Values.ToArray());
     }
 }

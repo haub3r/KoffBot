@@ -1,5 +1,5 @@
-﻿using KoffBot.Database;
-using Microsoft.EntityFrameworkCore;
+﻿using Azure.Storage.Blobs;
+using KoffBot.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -21,9 +21,9 @@ public class Program
             })
             .ConfigureServices((hostContext, services) =>
             {
-                var connectionString = Environment.GetEnvironmentVariable("DbConnectionString");
-                services.AddDbContext<KoffBotContext>(options =>
-                    options.UseSqlServer(connectionString));
+                var connectionString = Environment.GetEnvironmentVariable("BlobStorageConnectionString");
+                services.AddSingleton(_ => new BlobServiceClient(connectionString));
+                services.AddSingleton<BlobStorageService, BlobStorageService>();
             });
     }
 }

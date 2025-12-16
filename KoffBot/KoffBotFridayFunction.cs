@@ -1,6 +1,6 @@
-using KoffBot.Database;
-using KoffBot.Models;
 using KoffBot.Messages;
+using KoffBot.Models;
+using KoffBot.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using System.Text;
@@ -10,12 +10,12 @@ namespace KoffBot;
 
 public class KoffBotFridayFunction
 {
-    private readonly KoffBotContext _dbContext;
+    private readonly BlobStorageService _storageService;
     private readonly ILogger _logger;
 
-    public KoffBotFridayFunction(KoffBotContext dbContext, ILoggerFactory loggerFactory)
+    public KoffBotFridayFunction(BlobStorageService storageService, ILoggerFactory loggerFactory)
     {
-        _dbContext = dbContext;
+        _storageService = storageService;
         _logger = loggerFactory.CreateLogger<KoffBotFridayFunction>();
     }
 
@@ -34,7 +34,7 @@ public class KoffBotFridayFunction
         else
         {
             messages = FridayMessages.NormalFridayPossibilities;
-            
+
             // Add season specific messages to message pool.
             if (DateTime.Now.Month >= 11 || DateTime.Now.Month <= 3)
             {
@@ -69,15 +69,14 @@ public class KoffBotFridayFunction
         // Log the friday.
         try
         {
-            var newRow = new LogFriday
+            var newRow = new DefaultLog
             {
                 Created = DateTime.Now,
                 CreatedBy = "KoffBotFriday",
                 Modified = DateTime.Now,
                 ModifiedBy = "KoffBotFriday"
             };
-            await _dbContext.AddAsync(newRow);
-            await _dbContext.SaveChangesAsync();
+            await _storageService.AddAsync(StorageContainers.LogFriday, newRow);
         }
         catch (Exception e)
         {

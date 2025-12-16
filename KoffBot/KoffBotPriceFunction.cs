@@ -1,5 +1,4 @@
-﻿using KoffBot.Database;
-using KoffBot.Models;
+﻿using KoffBot.Models;
 using KoffBot.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
@@ -14,12 +13,12 @@ namespace KoffBot;
 
 public class KoffBotPriceFunction
 {
-    private readonly KoffBotContext _dbContext;
+    private readonly BlobStorageService _storageService;
     private readonly ILogger _logger;
 
-    public KoffBotPriceFunction(KoffBotContext dbContext, ILoggerFactory loggerFactory)
+    public KoffBotPriceFunction(BlobStorageService storageService, ILoggerFactory loggerFactory)
     {
-        _dbContext = dbContext;
+        _storageService = storageService;
         _logger = loggerFactory.CreateLogger<KoffBotPriceFunction>();
     }
 
@@ -35,10 +34,10 @@ public class KoffBotPriceFunction
             await AuthenticationService.Authenticate(req);
         }
 
-        return await GetKoffPrice(_dbContext, _logger, req);
+        return await GetKoffPrice(_storageService, _logger, req);
     }
 
-    private static async Task<HttpResponseData> GetKoffPrice(KoffBotContext _dbContext, ILogger logger, HttpRequestData req)
+    private static async Task<HttpResponseData> GetKoffPrice(BlobStorageService storageService, ILogger logger, HttpRequestData req)
     {
         // Get data from Alko.
         using var httpClient = new HttpClient();
@@ -53,7 +52,7 @@ public class KoffBotPriceFunction
             logger.LogError("Getting data from Alko failed. {e}", e);
             var result = req.CreateResponse(HttpStatusCode.InternalServerError);
             result.WriteString("Getting data from Alko failed.");
-            
+
             return result;
         }
 
@@ -63,8 +62,8 @@ public class KoffBotPriceFunction
         // Search for current price.
         var price = SearchCurrentPrice(package);
 
-        // Handle price in DB.
-        (string lastPrice, bool firstRunToday) = await HandleDbOperations(_dbContext, logger, price);
+        // Handle price in storage.
+        (string lastPrice, bool firstRunToday) = await HandleStorageOperations(storageService, logger, price);
 
         // Determine message.
         var message = DetermineMessage(price, lastPrice, firstRunToday);
@@ -126,17 +125,17 @@ public class KoffBotPriceFunction
         return price;
     }
 
-    private async static Task<(string, bool)> HandleDbOperations(KoffBotContext _dbContext, ILogger log, string price)
+    private async static Task<(string, bool)> HandleStorageOperations(BlobStorageService storageService, ILogger log, string price)
     {
         var lastPrice = "";
         var firstRunToday = false;
         try
         {
-            var lastUpdate = _dbContext.LogPrices.OrderByDescending(d => d.Created)?.FirstOrDefault();
-            if (lastUpdate.Created < DateTime.Today)
+            var lastUpdate = await storageService.GetLatestAsync<PriceLog>(StorageContainers.LogPrice);
+            if (lastUpdate == null || lastUpdate.Created < DateTime.Today)
             {
                 firstRunToday = true;
-                var newPrice = new LogPrice
+                var newPrice = new PriceLog
                 {
                     Amount = price,
                     Created = DateTime.Now,
@@ -144,10 +143,9 @@ public class KoffBotPriceFunction
                     Modified = DateTime.Now,
                     ModifiedBy = "KoffBotPrice"
                 };
-                await _dbContext.LogPrices.AddAsync(newPrice);
-                await _dbContext.SaveChangesAsync();
+                await storageService.AddAsync(StorageContainers.LogPrice, newPrice);
             }
-            lastPrice = lastUpdate.Amount;
+            lastPrice = lastUpdate?.Amount ?? price;
         }
         catch (Exception e)
         {
@@ -156,7 +154,7 @@ public class KoffBotPriceFunction
 
         return (lastPrice, firstRunToday);
     }
-    
+
     private static string DetermineMessage(string price, string lastPrice, bool firstRunToday)
     {
         var priceAsDec = Convert.ToDecimal(price, CultureInfo.InvariantCulture);
