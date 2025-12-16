@@ -56,12 +56,19 @@ public class BlobStorageService
     public async Task AddAsync<T>(string containerName, T entity) where T : DefaultLog
     {
         var containerClient = await GetContainerClientAsync(containerName);
-        var blobClient = containerClient.GetBlobClient($"{entity.Id}.json");
+        var blobPath = GetBlobPath(entity);
+        var blobClient = containerClient.GetBlobClient(blobPath);
 
         var json = JsonSerializer.Serialize(entity);
         using var stream = new MemoryStream(Encoding.UTF8.GetBytes(json));
 
         await blobClient.UploadAsync(stream, new BlobHttpHeaders { ContentType = "application/json" });
+    }
+
+    private static string GetBlobPath<T>(T entity) where T : DefaultLog
+    {
+        var created = entity.Created;
+        return $"{created.Year}/{created.Month:D2}/{created.Day:D2}/{entity.Id}.json";
     }
 
     private async Task<BlobContainerClient> GetContainerClientAsync(string containerName)
