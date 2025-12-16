@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/GitHub Actions/">
+    <File Path=".github/workflows/koffbot-dev.yml" />
+    <File Path=".github/workflows/koffbot-prod.yml" />
+  </Folder>
+  <Project Path="KoffBot/KoffBot.csproj" />
+</Solution>

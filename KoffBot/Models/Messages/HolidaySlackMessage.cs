@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace KoffBot.Models;
+namespace KoffBot.Models.Messages;
 
-public class UntappdSlackMessage
+public class HolidaySlackMessage
 {
     [JsonPropertyName("text")]
     public string Text { get; set; }

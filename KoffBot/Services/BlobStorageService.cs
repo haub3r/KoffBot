@@ -1,6 +1,6 @@
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using KoffBot.Models;
+using KoffBot.Models.Logs;
 using System.Text;
 using System.Text.Json;
 

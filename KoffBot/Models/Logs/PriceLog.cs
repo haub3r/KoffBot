@@ -1,4 +1,4 @@
-namespace KoffBot.Models;
+namespace KoffBot.Models.Logs;
 
 public class PriceLog : DefaultLog
 {

@@ -1,4 +1,5 @@
 ﻿using KoffBot.Models;
+using KoffBot.Models.Logs;
 using KoffBot.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
