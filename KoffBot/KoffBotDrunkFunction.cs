@@ -1,4 +1,3 @@
-using KoffBot.Database;
 using KoffBot.Models;
 using KoffBot.Services;
 using Microsoft.Azure.Functions.Worker;
@@ -12,12 +11,12 @@ namespace KoffBot;
 
 public class KoffBotDrunkFunction
 {
-    private readonly KoffBotContext _dbContext;
+    private readonly BlobStorageService _storageService;
     private readonly ILogger _logger;
 
-    public KoffBotDrunkFunction(KoffBotContext dbContext, ILoggerFactory loggerFactory)
+    public KoffBotDrunkFunction(BlobStorageService storageService, ILoggerFactory loggerFactory)
     {
-        _dbContext = dbContext;
+        _storageService = storageService;
         _logger = loggerFactory.CreateLogger<KoffBotDrunkFunction>();
     }
 
@@ -26,7 +25,7 @@ public class KoffBotDrunkFunction
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequestData req)
     {
         _logger.LogInformation("KoffBot activated. Ready to get rip-roaring drunk.");
-        
+
         var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
         if (env != ResponseEndpointService.LocalEnvironmentName)
         {
@@ -49,15 +48,14 @@ public class KoffBotDrunkFunction
         // Log the drunkedness.
         try
         {
-            var newRow = new LogDrunk
+            var newRow = new DefaultLog
             {
                 Created = DateTime.Now,
                 CreatedBy = "KoffBotDrunk",
                 Modified = DateTime.Now,
                 ModifiedBy = "KoffBotDrunk"
             };
-            await _dbContext.AddAsync(newRow);
-            await _dbContext.SaveChangesAsync();
+            await _storageService.AddAsync(StorageContainers.LogDrunk, newRow);
         }
         catch (Exception e)
         {

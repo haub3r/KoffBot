@@ -1,20 +1,19 @@
-using KoffBot.Database;
 using KoffBot.Models;
+using KoffBot.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace KoffBot;
 
 public class KoffBotStatsFunction
 {
-    private readonly KoffBotContext _dbContext;
+    private readonly BlobStorageService _storageService;
     private readonly ILogger _logger;
 
-    public KoffBotStatsFunction(KoffBotContext dbContext, ILoggerFactory loggerFactory)
+    public KoffBotStatsFunction(BlobStorageService storageService, ILoggerFactory loggerFactory)
     {
-        _dbContext = dbContext;
+        _storageService = storageService;
         _logger = loggerFactory.CreateLogger<KoffBotStatsFunction>();
     }
 
@@ -27,10 +26,9 @@ public class KoffBotStatsFunction
         // Get the stats.
         try
         {
-            var result = new Stats();
-            var drunkCount = await _dbContext.LogDrunks.CountAsync();
-            var fridayCount = await _dbContext.LogFridays.CountAsync();
-            var toastCount = await _dbContext.LogToasts.CountAsync();
+            var drunkCount = await _storageService.GetCountAsync(StorageContainers.LogDrunk);
+            var fridayCount = await _storageService.GetCountAsync(StorageContainers.LogFriday);
+            var toastCount = await _storageService.GetCountAsync(StorageContainers.LogToast);
 
             return new Stats
             {
