@@ -3,4 +3,3 @@
 - Add test project and simple tests
 - Download holidays to DB at the start of each year and use that info instead of always getting holidays from API
 - Add manual adding of webbitiimi-events and reminders for them
-- Refactor SQL server to blob storage approach (cost reasons)

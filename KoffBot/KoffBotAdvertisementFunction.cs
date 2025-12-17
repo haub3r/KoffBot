@@ -1,9 +1,11 @@
 using KoffBot.Models;
+using KoffBot.Models.Messages;
 using KoffBot.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 
@@ -50,7 +52,7 @@ public class KoffBotAdvertisementFunction
             };
             var aiRequest = new HttpRequestMessage(HttpMethod.Post, "https://api.openai.com/v1/completions")
             {
-                Content = new StringContent(JsonSerializer.Serialize(aiDto), Encoding.UTF8, "application/json")
+                Content = new StringContent(JsonSerializer.Serialize(aiDto), Encoding.UTF8, new MediaTypeHeaderValue("application/json"))
             };
             aiRequest.Headers.Add("Authorization", Environment.GetEnvironmentVariable("OpenAiApiKey"));
             var response = await httpClient.SendAsync(aiRequest);
@@ -72,7 +74,7 @@ public class KoffBotAdvertisementFunction
 
         var slackRequest = new HttpRequestMessage(HttpMethod.Post, ResponseEndpointService.GetResponseEndpoint())
         {
-            Content = new StringContent(JsonSerializer.Serialize(slackDto), Encoding.UTF8, "application/json")
+            Content = new StringContent(JsonSerializer.Serialize(slackDto), Encoding.UTF8, new MediaTypeHeaderValue("application/json"))
         };
         await httpClient.SendAsync(slackRequest);
     }

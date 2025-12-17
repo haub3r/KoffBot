@@ -1,8 +1,11 @@
 using KoffBot.Messages;
 using KoffBot.Models;
+using KoffBot.Models.Logs;
+using KoffBot.Models.Messages;
 using KoffBot.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 
@@ -59,7 +62,7 @@ public class KoffBotFridayFunction
 
         var content = new HttpRequestMessage(HttpMethod.Post, ResponseEndpointService.GetResponseEndpoint())
         {
-            Content = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json")
+            Content = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, new MediaTypeHeaderValue("application/json"))
         };
 
         // Send message to Slack channel.
