@@ -6,20 +6,19 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using System.Net;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Text.Json;
 
 namespace KoffBot;
 
 public class KoffBotDrunkFunction
 {
     private readonly BlobStorageService _storageService;
+    private readonly MessagingService _slackService;
     private readonly ILogger _logger;
 
-    public KoffBotDrunkFunction(BlobStorageService storageService, ILoggerFactory loggerFactory)
+    public KoffBotDrunkFunction(BlobStorageService storageService, MessagingService slackService, ILoggerFactory loggerFactory)
     {
         _storageService = storageService;
+        _slackService = slackService;
         _logger = loggerFactory.CreateLogger<KoffBotDrunkFunction>();
     }
 
@@ -36,33 +35,27 @@ public class KoffBotDrunkFunction
         }
 
         // Send message to Slack channel.
-        using var httpClient = new HttpClient();
         var dto = new DrunkSlackMessage
         {
             Text = "KoffBot drank some delicious Koff beer and is now in 'Drunk Mode' for the next hour. Toasting will be difficult."
         };
-
-        var content = new HttpRequestMessage(HttpMethod.Post, ResponseEndpointService.GetResponseEndpoint())
-        {
-            Content = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, new MediaTypeHeaderValue("application/json"))
-        };
-        await httpClient.SendAsync(content);
+        await _slackService.PostMessageAsync(dto);
 
         // Log the drunkedness.
         try
         {
             var newRow = new DefaultLog
             {
-                Created = DateTime.Now,
+                Created = DateTime.UtcNow,
                 CreatedBy = "KoffBotDrunk",
-                Modified = DateTime.Now,
+                Modified = DateTime.UtcNow,
                 ModifiedBy = "KoffBotDrunk"
             };
             await _storageService.AddAsync(StorageContainers.LogDrunk, newRow);
         }
         catch (Exception e)
         {
-            _logger.LogError("Saving into drunkedness log failed. {e}", e);
+            _logger.LogError(e, "Saving into drunkedness log failed.");
             var result = req.CreateResponse(HttpStatusCode.OK);
             result.WriteString("Saving into drunkedness log failed.");
 

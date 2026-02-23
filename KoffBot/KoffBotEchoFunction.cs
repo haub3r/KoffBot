@@ -1,26 +1,24 @@
-﻿using KoffBot.Models;
-using KoffBot.Models.Messages;
+﻿using KoffBot.Models.Messages;
 using KoffBot.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using System.Collections.Specialized;
 using System.Net;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Text.Json;
 using System.Web;
 
 namespace KoffBot;
 
 public class KoffBotEchoFunction
 {
+    private readonly MessagingService _slackService;
     private readonly ILogger _logger;
     private const string IiroUserId = "U0106R0N6NB";
     private const string IiroUserDevId = "U01D73HKFC3";
 
-    public KoffBotEchoFunction(ILoggerFactory loggerFactory)
+    public KoffBotEchoFunction(MessagingService slackService, ILoggerFactory loggerFactory)
     {
+        _slackService = slackService;
         _logger = loggerFactory.CreateLogger<KoffBotEchoFunction>();
     }
 
@@ -51,17 +49,11 @@ public class KoffBotEchoFunction
             return req.CreateResponse(HttpStatusCode.Forbidden);
         }
 
-        using var httpClient = new HttpClient();
         var dto = new EchoSlackMessage
         {
             Text = userMessage
         };
-
-        var content = new HttpRequestMessage(HttpMethod.Post, ResponseEndpointService.GetResponseEndpoint())
-        {
-            Content = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, new MediaTypeHeaderValue("application/json"))
-        };
-        await httpClient.SendAsync(content);
+        await _slackService.PostMessageAsync(dto);
 
         return req.CreateResponse(HttpStatusCode.OK);
     }

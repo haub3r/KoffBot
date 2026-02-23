@@ -13,16 +13,18 @@ namespace KoffBot;
 
 public class KoffBotAdvertisementFunction
 {
+    private readonly MessagingService _slackService;
     private readonly ILogger _logger;
 
-    public KoffBotAdvertisementFunction(ILoggerFactory loggerFactory)
+    public KoffBotAdvertisementFunction(MessagingService slackService, ILoggerFactory loggerFactory)
     {
+        _slackService = slackService;
         _logger = loggerFactory.CreateLogger<KoffBotAdvertisementFunction>();
     }
 
     // For this function to work, we would need to buy OpenAI API access again.
     [Function("KoffBotAdvertisement")]
-    public async Task Run(
+    public async Task<HttpResponseData> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequestData req)
     {
         _logger.LogInformation("KoffBot activated. Ready to advertise using AI.");
@@ -33,14 +35,14 @@ public class KoffBotAdvertisementFunction
             await AuthenticationService.Authenticate(req);
         }
 
-        await GetAiMessage(_logger, req);
+        return await GetAiMessage(req);
     }
 
-    private static async Task GetAiMessage(ILogger logger, HttpRequestData req)
+    private async Task<HttpResponseData> GetAiMessage(HttpRequestData req)
     {
         // Get message from OpenAI.
         using var httpClient = new HttpClient();
-        string responseMessage = "";
+        string responseMessage;
         try
         {
             var aiDto = new AiRequest
@@ -62,8 +64,10 @@ public class KoffBotAdvertisementFunction
         }
         catch (Exception e)
         {
-            logger.LogError("Getting data from OpenAI failed. {e}", e);
+            _logger.LogError(e, "Getting data from OpenAI failed.");
             var result = req.CreateResponse(HttpStatusCode.InternalServerError);
+            result.WriteString("Getting data from OpenAI failed.");
+            return result;
         }
 
         // Send message to Slack channel.
@@ -71,11 +75,8 @@ public class KoffBotAdvertisementFunction
         {
             Text = responseMessage
         };
+        await _slackService.PostMessageAsync(slackDto);
 
-        var slackRequest = new HttpRequestMessage(HttpMethod.Post, ResponseEndpointService.GetResponseEndpoint())
-        {
-            Content = new StringContent(JsonSerializer.Serialize(slackDto), Encoding.UTF8, new MediaTypeHeaderValue("application/json"))
-        };
-        await httpClient.SendAsync(slackRequest);
+        return req.CreateResponse(HttpStatusCode.OK);
     }
 }

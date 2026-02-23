@@ -5,20 +5,19 @@ using KoffBot.Models.Messages;
 using KoffBot.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Text.Json;
 
 namespace KoffBot;
 
 public class KoffBotFridayFunction
 {
     private readonly BlobStorageService _storageService;
+    private readonly MessagingService _slackService;
     private readonly ILogger _logger;
 
-    public KoffBotFridayFunction(BlobStorageService storageService, ILoggerFactory loggerFactory)
+    public KoffBotFridayFunction(BlobStorageService storageService, MessagingService slackService, ILoggerFactory loggerFactory)
     {
         _storageService = storageService;
+        _slackService = slackService;
         _logger = loggerFactory.CreateLogger<KoffBotFridayFunction>();
     }
 
@@ -60,30 +59,24 @@ public class KoffBotFridayFunction
             Text = messages[randomIndex]
         };
 
-        var content = new HttpRequestMessage(HttpMethod.Post, ResponseEndpointService.GetResponseEndpoint())
-        {
-            Content = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, new MediaTypeHeaderValue("application/json"))
-        };
-
         // Send message to Slack channel.
-        using var httpClient = new HttpClient();
-        await httpClient.SendAsync(content);
+        await _slackService.PostMessageAsync(dto);
 
         // Log the friday.
         try
         {
             var newRow = new DefaultLog
             {
-                Created = DateTime.Now,
+                Created = DateTime.UtcNow,
                 CreatedBy = "KoffBotFriday",
-                Modified = DateTime.Now,
+                Modified = DateTime.UtcNow,
                 ModifiedBy = "KoffBotFriday"
             };
             await _storageService.AddAsync(StorageContainers.LogFriday, newRow);
         }
         catch (Exception e)
         {
-            _logger.LogError("Saving into friday log failed. {e}", e);
+            _logger.LogError(e, "Saving into friday log failed.");
         }
     }
 }

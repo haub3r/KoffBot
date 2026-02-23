@@ -24,6 +24,8 @@ public class Program
                 var connectionString = Environment.GetEnvironmentVariable("BlobStorageConnectionString");
                 services.AddSingleton(_ => new BlobServiceClient(connectionString));
                 services.AddSingleton<BlobStorageService, BlobStorageService>();
+                services.AddHttpClient();
+                services.AddSingleton<MessagingService>();
             });
     }
 }
