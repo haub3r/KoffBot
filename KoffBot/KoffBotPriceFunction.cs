@@ -41,7 +41,14 @@ public partial class KoffBotPriceFunction
         using var httpClient = new HttpClient();
         try
         {
-            httpClient.DefaultRequestHeaders.Add("User-Agent", "KoffBot/1.0");
+            httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36");
+            httpClient.DefaultRequestHeaders.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+            httpClient.DefaultRequestHeaders.Add("Accept-Language", "fi-FI,fi;q=0.9,en;q=0.8");
+            httpClient.DefaultRequestHeaders.Add("Sec-Fetch-Dest", "document");
+            httpClient.DefaultRequestHeaders.Add("Sec-Fetch-Mode", "navigate");
+            httpClient.DefaultRequestHeaders.Add("Sec-Fetch-Site", "none");
+            httpClient.DefaultRequestHeaders.Add("Sec-Ch-Ua", "\"Chromium\";v=\"131\", \"Not_A Brand\";v=\"24\"");
+            httpClient.DefaultRequestHeaders.Add("Sec-Ch-Ua-Platform", "\"Windows\"");
             var html = await httpClient.GetStringAsync(KoffProductUrl);
             price = ParsePriceFromHtml(html);
         }

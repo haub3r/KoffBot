@@ -1,9 +1,13 @@
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Azure.Functions.Worker.Middleware;
+using Microsoft.Extensions.Logging;
+using System.Net;
+using System.Security.Authentication;
 
 namespace KoffBot.Services;
 
-public class SlackAuthenticationMiddleware : IFunctionsWorkerMiddleware
+public class SlackAuthenticationMiddleware(ILogger<SlackAuthenticationMiddleware> logger) : IFunctionsWorkerMiddleware
 {
     private static readonly HashSet<string> UnauthenticatedFunctions = ["KoffBotStats"];
 
@@ -17,8 +21,19 @@ public class SlackAuthenticationMiddleware : IFunctionsWorkerMiddleware
                 var httpReqData = await context.GetHttpRequestDataAsync();
                 if (httpReqData is not null)
                 {
-                    await AuthenticationService.Authenticate(httpReqData);
-                    httpReqData.Body.Position = 0;
+                    try
+                    {
+                        await AuthenticationService.Authenticate(httpReqData);
+                        httpReqData.Body.Position = 0;
+                    }
+                    catch (AuthenticationException ex)
+                    {
+                        logger.LogWarning(ex, "Slack authentication failed for {Function}.", context.FunctionDefinition.Name);
+                        var response = httpReqData.CreateResponse(HttpStatusCode.Unauthorized);
+                        await response.WriteStringAsync("Authentication failed.");
+                        context.GetInvocationResult().Value = response;
+                        return;
+                    }
                 }
             }
         }
