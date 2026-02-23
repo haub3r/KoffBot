@@ -27,11 +27,6 @@ public class KoffBotToastFunction
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequestData req)
     {
         _logger.LogInformation("KoffBot activated. Ready for furious toasting.");
-        var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
-        if (env != ResponseEndpointService.LocalEnvironmentName)
-        {
-            await AuthenticationService.Authenticate(req);
-        }
 
         // Check if in "Drunk Mode".
         var drunkMode = false;

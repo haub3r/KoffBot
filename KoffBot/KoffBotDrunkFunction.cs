@@ -28,12 +28,6 @@ public class KoffBotDrunkFunction
     {
         _logger.LogInformation("KoffBot activated. Ready to get rip-roaring drunk.");
 
-        var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
-        if (env != ResponseEndpointService.LocalEnvironmentName)
-        {
-            await AuthenticationService.Authenticate(req);
-        }
-
         // Send message to Slack channel.
         var dto = new DrunkSlackMessage
         {

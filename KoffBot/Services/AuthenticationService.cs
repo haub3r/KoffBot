@@ -31,7 +31,7 @@ public static class AuthenticationService
         }
     }
 
-    public static string ToHexString(byte[] array)
+    private static string ToHexString(byte[] array)
     {
         StringBuilder hex = new(array.Length * 2);
         foreach (byte b in array)
