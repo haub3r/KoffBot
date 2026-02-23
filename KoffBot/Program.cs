@@ -1,5 +1,6 @@
 ﻿using Azure.Storage.Blobs;
 using KoffBot.Services;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -10,7 +11,7 @@ public class Program
 	private static async Task Main(string[] args)
 	{
 		var host = new HostBuilder()
-			.ConfigureFunctionsWebApplication(builder =>
+			.ConfigureFunctionsWorkerDefaults(builder =>
 			{
 				builder.UseMiddleware<SlackAuthenticationMiddleware>();
 			})
