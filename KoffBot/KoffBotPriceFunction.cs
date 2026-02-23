@@ -5,17 +5,18 @@ using KoffBot.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
-using OfficeOpenXml;
 using System.Globalization;
 using System.Net;
+using System.Text.RegularExpressions;
 
 namespace KoffBot;
 
-public class KoffBotPriceFunction
+public partial class KoffBotPriceFunction
 {
     private readonly BlobStorageService _storageService;
     private readonly MessagingService _slackService;
     private readonly ILogger _logger;
+    private const string KoffProductUrl = "https://www.alko.fi/fi/tuotteet/718934/koff-a-iv-olut";
 
     public KoffBotPriceFunction(BlobStorageService storageService, MessagingService slackService, ILoggerFactory loggerFactory)
     {
@@ -30,24 +31,19 @@ public class KoffBotPriceFunction
     {
         _logger.LogInformation("KoffBot activated. Ready to fetch perfect prices.");
 
-        var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
-        if (env != ResponseEndpointService.LocalEnvironmentName)
-        {
-            await AuthenticationService.Authenticate(req);
-        }
-
         return await GetKoffPrice(req);
     }
 
     private async Task<HttpResponseData> GetKoffPrice(HttpRequestData req)
     {
-        // Get data from Alko.
+        // Get price from Alko product page.
+        string price;
         using var httpClient = new HttpClient();
         try
         {
-            var url = "https://www.alko.fi/INTERSHOP/static/WFS/Alko-OnlineShop-Site/-/Alko-OnlineShop/fi_FI/Alkon%20Hinnasto%20Tekstitiedostona/alkon-hinnasto-tekstitiedostona.xlsx";
-            byte[] fileBytes = await httpClient.GetByteArrayAsync(url);
-            File.WriteAllBytes($"{Path.GetTempPath()}\\alkon-hinnasto-tekstitiedostona.xlsx", fileBytes);
+            httpClient.DefaultRequestHeaders.Add("User-Agent", "KoffBot/1.0");
+            var html = await httpClient.GetStringAsync(KoffProductUrl);
+            price = ParsePriceFromHtml(html);
         }
         catch (Exception e)
         {
@@ -57,12 +53,6 @@ public class KoffBotPriceFunction
 
             return result;
         }
-
-        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-        using var package = new ExcelPackage(new FileInfo($"{Path.GetTempPath()}\\alkon-hinnasto-tekstitiedostona.xlsx"));
-
-        // Search for current price.
-        var price = SearchCurrentPrice(package);
 
         // Handle price in storage.
         (string lastPrice, bool firstRunToday) = await HandleStorageOperations(price);
@@ -82,45 +72,22 @@ public class KoffBotPriceFunction
         return req.CreateResponse(HttpStatusCode.OK);
     }
 
-    private static string SearchCurrentPrice(ExcelPackage package)
+    private static string ParsePriceFromHtml(string html)
     {
-        var firstSheet = package.Workbook.Worksheets.First();
-
-        var koffCell =
-            from cells in firstSheet.Cells
-            where cells.Value.ToString() == "718934"
-            select cells;
-
-        var currentRowNumber = koffCell.First().Start.Row;
-        var currentRow =
-            from cells in firstSheet.Cells
-            where cells.Start.Row == currentRowNumber
-            select cells;
-
-        var unitSize = "";
-        var price = "";
-        var priceByLitre = "";
-        foreach (var cell in currentRow)
+        // The product page contains "Hinta X,XX €" in the product info section.
+        var match = PriceRegex().Match(html);
+        if (!match.Success)
         {
-            var addressLetter = cell.Address[..1];
-            switch (addressLetter)
-            {
-                case "D":
-                    unitSize = cell.Text;
-                    break;
-                case "E":
-                    price = cell.Text;
-                    break;
-                case "F":
-                    priceByLitre = cell.Text + "€";
-                    break;
-                default:
-                    break;
-            }
+            throw new InvalidOperationException("Could not find Koff price on the Alko product page.");
         }
 
-        return price;
+        // Return the price with dot as decimal separator for consistent storage (e.g. "1.55").
+        var priceText = match.Groups[1].Value;
+        return priceText.Replace(',', '.');
     }
+
+    [GeneratedRegex(@"Hinta\s+(\d+,\d{2})\s*€")]
+    private static partial Regex PriceRegex();
 
     private async Task<(string, bool)> HandleStorageOperations(string price)
     {

@@ -24,12 +24,6 @@ public class KoffBotUntappdFunction
     {
         _logger.LogInformation("KoffBot activated. Ready to advertise Untappd.");
 
-        var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
-        if (env != ResponseEndpointService.LocalEnvironmentName)
-        {
-            await AuthenticationService.Authenticate(req);
-        }
-
         var dto = new UntappdSlackMessage
         {
             Text = "Muista, että voit arvostella Koffin Untappd-sovelluksessa. Sovelluksen saa osoitteesta: www.untappd.com. Annathan Koffille viisi tähteä :koff:"

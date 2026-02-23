@@ -28,14 +28,6 @@ public class KoffBotEchoFunction
     {
         _logger.LogInformation("KoffBot activated. Ready to echo some wise words.");
 
-        var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
-        if (env != ResponseEndpointService.LocalEnvironmentName)
-        {
-            await AuthenticationService.Authenticate(req);
-        }
-
-        // Authentication reads the stream also, so we need to set the position to 0 manually.
-        req.Body.Position = 0;
         string requestBody = await req.ReadAsStringAsync();
         NameValueCollection payload = HttpUtility.ParseQueryString(requestBody);
 

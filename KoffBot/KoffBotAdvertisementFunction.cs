@@ -29,12 +29,6 @@ public class KoffBotAdvertisementFunction
     {
         _logger.LogInformation("KoffBot activated. Ready to advertise using AI.");
 
-        var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", EnvironmentVariableTarget.Process);
-        if (env != ResponseEndpointService.LocalEnvironmentName)
-        {
-            await AuthenticationService.Authenticate(req);
-        }
-
         return await GetAiMessage(req);
     }
 
