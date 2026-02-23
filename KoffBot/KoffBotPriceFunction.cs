@@ -8,20 +8,19 @@ using Microsoft.Extensions.Logging;
 using OfficeOpenXml;
 using System.Globalization;
 using System.Net;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Text.Json;
 
 namespace KoffBot;
 
 public class KoffBotPriceFunction
 {
     private readonly BlobStorageService _storageService;
+    private readonly MessagingService _slackService;
     private readonly ILogger _logger;
 
-    public KoffBotPriceFunction(BlobStorageService storageService, ILoggerFactory loggerFactory)
+    public KoffBotPriceFunction(BlobStorageService storageService, MessagingService slackService, ILoggerFactory loggerFactory)
     {
         _storageService = storageService;
+        _slackService = slackService;
         _logger = loggerFactory.CreateLogger<KoffBotPriceFunction>();
     }
 
@@ -37,10 +36,10 @@ public class KoffBotPriceFunction
             await AuthenticationService.Authenticate(req);
         }
 
-        return await GetKoffPrice(_storageService, _logger, req);
+        return await GetKoffPrice(req);
     }
 
-    private static async Task<HttpResponseData> GetKoffPrice(BlobStorageService storageService, ILogger logger, HttpRequestData req)
+    private async Task<HttpResponseData> GetKoffPrice(HttpRequestData req)
     {
         // Get data from Alko.
         using var httpClient = new HttpClient();
@@ -52,7 +51,7 @@ public class KoffBotPriceFunction
         }
         catch (Exception e)
         {
-            logger.LogError("Getting data from Alko failed. {e}", e);
+            _logger.LogError(e, "Getting data from Alko failed.");
             var result = req.CreateResponse(HttpStatusCode.InternalServerError);
             result.WriteString("Getting data from Alko failed.");
 
@@ -66,7 +65,7 @@ public class KoffBotPriceFunction
         var price = SearchCurrentPrice(package);
 
         // Handle price in storage.
-        (string lastPrice, bool firstRunToday) = await HandleStorageOperations(storageService, logger, price);
+        (string lastPrice, bool firstRunToday) = await HandleStorageOperations(price);
 
         // Determine message.
         var message = DetermineMessage(price, lastPrice, firstRunToday);
@@ -78,12 +77,7 @@ public class KoffBotPriceFunction
         {
             Text = fullMessage,
         };
-
-        var content = new HttpRequestMessage(HttpMethod.Post, ResponseEndpointService.GetResponseEndpoint())
-        {
-            Content = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, new MediaTypeHeaderValue("application/json"))
-        };
-        await httpClient.SendAsync(content);
+        await _slackService.PostMessageAsync(dto);
 
         return req.CreateResponse(HttpStatusCode.OK);
     }
@@ -128,31 +122,31 @@ public class KoffBotPriceFunction
         return price;
     }
 
-    private async static Task<(string, bool)> HandleStorageOperations(BlobStorageService storageService, ILogger log, string price)
+    private async Task<(string, bool)> HandleStorageOperations(string price)
     {
         var lastPrice = "";
         var firstRunToday = false;
         try
         {
-            var lastUpdate = await storageService.GetLatestAsync<PriceLog>(StorageContainers.LogPrice);
+            var lastUpdate = await _storageService.GetLatestAsync<PriceLog>(StorageContainers.LogPrice);
             if (lastUpdate == null || lastUpdate.Created < DateTime.Today)
             {
                 firstRunToday = true;
                 var newPrice = new PriceLog
                 {
                     Amount = price,
-                    Created = DateTime.Now,
+                    Created = DateTime.UtcNow,
                     CreatedBy = "KoffBotPrice",
-                    Modified = DateTime.Now,
+                    Modified = DateTime.UtcNow,
                     ModifiedBy = "KoffBotPrice"
                 };
-                await storageService.AddAsync(StorageContainers.LogPrice, newPrice);
+                await _storageService.AddAsync(StorageContainers.LogPrice, newPrice);
             }
             lastPrice = lastUpdate?.Amount ?? price;
         }
         catch (Exception e)
         {
-            log.LogError("Getting the last price failed. {e}", e);
+            _logger.LogError(e, "Getting the last price failed.");
         }
 
         return (lastPrice, firstRunToday);

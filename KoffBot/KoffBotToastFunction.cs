@@ -6,20 +6,19 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using System.Net;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Text.Json;
 
 namespace KoffBot;
 
 public class KoffBotToastFunction
 {
     private readonly BlobStorageService _storageService;
+    private readonly MessagingService _slackService;
     private readonly ILogger _logger;
 
-    public KoffBotToastFunction(BlobStorageService storageService, ILoggerFactory loggerFactory)
+    public KoffBotToastFunction(BlobStorageService storageService, MessagingService slackService, ILoggerFactory loggerFactory)
     {
         _storageService = storageService;
+        _slackService = slackService;
         _logger = loggerFactory.CreateLogger<KoffBotToastFunction>();
     }
 
@@ -46,7 +45,7 @@ public class KoffBotToastFunction
         }
         catch (Exception e)
         {
-            _logger.LogError("Reading from drunkedness log failed. {e}", e);
+            _logger.LogError(e, "Reading from drunkedness log failed.");
             var result = req.CreateResponse(HttpStatusCode.InternalServerError);
             result.WriteString("Reading from drunkedness log failed.");
 
@@ -64,28 +63,23 @@ public class KoffBotToastFunction
             message.Text = ScrambleWord(message.Text);
         }
 
-        using var httpClient = new HttpClient();
-        var content = new HttpRequestMessage(HttpMethod.Post, ResponseEndpointService.GetResponseEndpoint())
-        {
-            Content = new StringContent(JsonSerializer.Serialize(message), Encoding.UTF8, new MediaTypeHeaderValue("application/json"))
-        };
-        await httpClient.SendAsync(content);
+        await _slackService.PostMessageAsync(message);
 
         // Log the toasting.
         try
         {
             var newRow = new DefaultLog
             {
-                Created = DateTime.Now,
+                Created = DateTime.UtcNow,
                 CreatedBy = "KoffBotToast",
-                Modified = DateTime.Now,
+                Modified = DateTime.UtcNow,
                 ModifiedBy = "KoffBotToast"
             };
             await _storageService.AddAsync(StorageContainers.LogToast, newRow);
         }
         catch (Exception e)
         {
-            _logger.LogError("Saving into toasting log failed. {e}", e);
+            _logger.LogError(e, "Saving into toasting log failed.");
             var result = req.CreateResponse(HttpStatusCode.InternalServerError);
             result.WriteString("Saving into toasting log failed.");
 

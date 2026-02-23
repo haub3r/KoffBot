@@ -1,22 +1,20 @@
-﻿using KoffBot.Models;
-using KoffBot.Models.Messages;
+﻿using KoffBot.Models.Messages;
 using KoffBot.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using System.Net;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Text.Json;
 
 namespace KoffBot;
 
 public class KoffBotUntappdFunction
 {
+    private readonly MessagingService _slackService;
     private readonly ILogger _logger;
 
-    public KoffBotUntappdFunction(ILoggerFactory loggerFactory)
+    public KoffBotUntappdFunction(MessagingService slackService, ILoggerFactory loggerFactory)
     {
+        _slackService = slackService;
         _logger = loggerFactory.CreateLogger<KoffBotUntappdFunction>();
     }
 
@@ -32,17 +30,11 @@ public class KoffBotUntappdFunction
             await AuthenticationService.Authenticate(req);
         }
 
-        using var httpClient = new HttpClient();
         var dto = new UntappdSlackMessage
         {
             Text = "Muista, että voit arvostella Koffin Untappd-sovelluksessa. Sovelluksen saa osoitteesta: www.untappd.com. Annathan Koffille viisi tähteä :koff:"
         };
-
-        var content = new HttpRequestMessage(HttpMethod.Post, ResponseEndpointService.GetResponseEndpoint())
-        {
-            Content = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, new MediaTypeHeaderValue("application/json"))
-        };
-        await httpClient.SendAsync(content);
+        await _slackService.PostMessageAsync(dto);
 
         return req.CreateResponse(HttpStatusCode.OK);
     }

@@ -3,24 +3,21 @@ using KoffBot.Models.Messages;
 using KoffBot.Messages;
 using KoffBot.Services;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
 using System.Net;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Text.Json;
 
 namespace KoffBot;
 
 public class KoffBotHolidayFunction
 {
-    private readonly IConfiguration _config;
+    private readonly MessagingService _slackService;
     private readonly ILogger _logger;
 
-    public KoffBotHolidayFunction(IConfiguration config, ILoggerFactory loggerFactory)
+    public KoffBotHolidayFunction(MessagingService slackService, ILoggerFactory loggerFactory)
     {
-        _config = config;
+        _slackService = slackService;
         _logger = loggerFactory.CreateLogger<KoffBotHolidayFunction>();
     }
 
@@ -59,17 +56,7 @@ public class KoffBotHolidayFunction
                 Text = slackMessage
             };
 
-            var slackWebHook = _config["SlackWebHook"];
-            if (string.IsNullOrEmpty(slackWebHook))
-            {
-                slackWebHook = ResponseEndpointService.GetResponseEndpoint();
-            }
-
-            var content = new HttpRequestMessage(HttpMethod.Post, slackWebHook)
-            {
-                Content = new StringContent(JsonSerializer.Serialize(message), Encoding.UTF8, new MediaTypeHeaderValue("application/json"))
-            };
-            await httpClient.SendAsync(content);
+            await _slackService.PostMessageAsync(message);
             break;
         }
     }
