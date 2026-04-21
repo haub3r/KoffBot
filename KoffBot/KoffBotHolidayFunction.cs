@@ -5,7 +5,6 @@ using KoffBot.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
-using System.Net;
 using System.Text.Json;
 
 namespace KoffBot;
@@ -14,12 +13,14 @@ public class KoffBotHolidayFunction
 {
     private readonly BlobStorageService _storageService;
     private readonly MessagingService _slackService;
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger _logger;
 
-    public KoffBotHolidayFunction(BlobStorageService storageService, MessagingService slackService, ILoggerFactory loggerFactory)
+    public KoffBotHolidayFunction(BlobStorageService storageService, MessagingService slackService, IHttpClientFactory httpClientFactory, ILoggerFactory loggerFactory)
     {
         _storageService = storageService;
         _slackService = slackService;
+        _httpClientFactory = httpClientFactory;
         _logger = loggerFactory.CreateLogger<KoffBotHolidayFunction>();
     }
 
@@ -91,8 +92,7 @@ public class KoffBotHolidayFunction
 
     private async Task<List<HolidayApiResponseDetails>> FetchAndStoreHolidaysAsync(int year)
     {
-        var clientHandler = new HttpClientHandler() { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate };
-        using var httpClient = new HttpClient(clientHandler);
+        using var httpClient = _httpClientFactory.CreateClient();
 
         var finnishHolidaysEndpoint = $"https://api.boffsaopendata.fi/bankingcalendar/v1/api/v1/BankHolidays?year={year}&pageNumber=1&pageSize=50";
         var response = await httpClient.GetAsync(finnishHolidaysEndpoint);

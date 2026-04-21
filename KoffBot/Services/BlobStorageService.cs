@@ -36,8 +36,20 @@ public class BlobStorageService
 
     public async Task<T> GetLatestAsync<T>(string containerName) where T : DefaultLog
     {
-        var all = await GetAllAsync<T>(containerName);
-        return all.OrderByDescending(x => x.Created).FirstOrDefault();
+        var containerClient = await GetContainerClientAsync(containerName);
+        string latestBlobName = null;
+
+        await foreach (var blobItem in containerClient.GetBlobsAsync())
+        {
+            latestBlobName = blobItem.Name;
+        }
+
+        if (latestBlobName is null)
+            return default;
+
+        var blobClient = containerClient.GetBlobClient(latestBlobName);
+        var response = await blobClient.DownloadContentAsync();
+        return JsonSerializer.Deserialize<T>(response.Value.Content.ToString());
     }
 
     public async Task<int> GetCountAsync(string containerName)

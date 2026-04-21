@@ -11,7 +11,7 @@ public class Program
 	private static async Task Main(string[] args)
 	{
 		var host = new HostBuilder()
-			.ConfigureFunctionsWorkerDefaults(builder =>
+			.ConfigureFunctionsWebApplication(builder =>
 			{
 				builder.UseMiddleware<SlackAuthenticationMiddleware>();
 			})

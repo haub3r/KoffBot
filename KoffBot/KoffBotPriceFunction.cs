@@ -15,13 +15,15 @@ public partial class KoffBotPriceFunction
 {
     private readonly BlobStorageService _storageService;
     private readonly MessagingService _slackService;
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger _logger;
     private const string KoffProductUrl = "https://www.alko.fi/fi/tuotteet/718934/koff-a-iv-olut";
 
-    public KoffBotPriceFunction(BlobStorageService storageService, MessagingService slackService, ILoggerFactory loggerFactory)
+    public KoffBotPriceFunction(BlobStorageService storageService, MessagingService slackService, IHttpClientFactory httpClientFactory, ILoggerFactory loggerFactory)
     {
         _storageService = storageService;
         _slackService = slackService;
+        _httpClientFactory = httpClientFactory;
         _logger = loggerFactory.CreateLogger<KoffBotPriceFunction>();
     }
 
@@ -38,7 +40,7 @@ public partial class KoffBotPriceFunction
     {
         // Get price from Alko product page.
         string price;
-        using var httpClient = new HttpClient();
+        using var httpClient = _httpClientFactory.CreateClient();
         try
         {
             httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36");
