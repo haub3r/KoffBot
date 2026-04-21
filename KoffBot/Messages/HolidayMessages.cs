@@ -15,4 +15,14 @@ public static class HolidayMessages
         {"Jouluaatto", "Hyvää ja onnellista joulua toivottaa KoffBot! :santa: :koff:"},
         {"Tapaninpäivä", "Tapaninpäivä on ensimmäisen marttyyrin Stefanoksen ja myös kaikkien muiden marttyyrien muistopäivä. Suomessa tapaninpäivästä on vuosien saatossa tullut myös hevosten ja hevosmiesten juhlapäivä. Mikä siis parempi päivä laittaa joululahjarahat oikealle hevoselle! Mene osoitteeseen unibet.com ja syötä promokoodi 'KOFFBOTSPECIAL' tienaaksesi 5$ ilmaisina vedonlyöntikrediitteinä! Koff! :koff:"},
     };
+
+    public static Dictionary<string, string> PreCelebrationPossibilities = new Dictionary<string, string>
+    {
+        {"Uudenvuodenpäivä", "Huomenna on uudenvuodenpäivä! Muista varata tarpeeksi Koffeja uuden vuoden juhlintaan! :koff:"},
+        {"Pitkäperjantai", "Huomenna on pitkäperjantai! Hanki ajoissa Koffit, kaupat saattavat mennä kiinni! :koff:"},
+        {"Vappu", "Huomenna on vappu! Olethan varannut tarpeeksi Koffeja huomiseen? :koff:"},
+        {"Helatorsta", "Huomenna on helatorstai! Arkivapaapäivä on parasta nautittuna Koffin kera! :koff:"},
+        {"Juhannusaatto", "Huomenna on juhannusaatto! Ovatko mökkilavan Koffit jo autossa? :koff: :koff: :koff:"},
+        {"Jouluaatto", "Huomenna on jouluaatto! Onko jouluolut jo jääkaapissa? Vihje: Koff! :santa: :koff:"},
+    };
 }

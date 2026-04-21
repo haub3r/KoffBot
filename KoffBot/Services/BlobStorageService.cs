@@ -65,6 +65,29 @@ public class BlobStorageService
         await blobClient.UploadAsync(stream, new BlobHttpHeaders { ContentType = "application/json" });
     }
 
+    public async Task<T> GetJsonAsync<T>(string containerName, string blobName)
+    {
+        var containerClient = await GetContainerClientAsync(containerName);
+        var blobClient = containerClient.GetBlobClient(blobName);
+
+        if (!await blobClient.ExistsAsync())
+            return default;
+
+        var response = await blobClient.DownloadContentAsync();
+        return JsonSerializer.Deserialize<T>(response.Value.Content.ToString());
+    }
+
+    public async Task SetJsonAsync<T>(string containerName, string blobName, T data)
+    {
+        var containerClient = await GetContainerClientAsync(containerName);
+        var blobClient = containerClient.GetBlobClient(blobName);
+
+        var json = JsonSerializer.Serialize(data);
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(json));
+
+        await blobClient.UploadAsync(stream, overwrite: true);
+    }
+
     private static string GetBlobPath<T>(T entity) where T : DefaultLog
     {
         var created = entity.Created;

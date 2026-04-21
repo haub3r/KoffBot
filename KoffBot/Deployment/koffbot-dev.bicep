@@ -4,7 +4,7 @@ param location string = resourceGroup().location
 @description('Key Vault base URL to avoid GitHub warnings.')
 param keyVaultBaseUrl string
 
-resource functionStorage 'Microsoft.Storage/storageAccounts@2021-04-01' = {
+resource functionStorage 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   name: 'storageaccountkoffb843f'
   location: location
   kind: 'StorageV2'
@@ -17,7 +17,7 @@ resource functionStorage 'Microsoft.Storage/storageAccounts@2021-04-01' = {
   }
 }
 
-resource consumptionPlan 'Microsoft.Web/serverfarms@2021-01-01' = {
+resource consumptionPlan 'Microsoft.Web/serverfarms@2023-12-01' = {
   name: 'ASP-KoffBotDev-b443'
   location: location
   sku: {
@@ -28,10 +28,6 @@ resource consumptionPlan 'Microsoft.Web/serverfarms@2021-01-01' = {
 
 var storageConnectionString = 'DefaultEndpointsProtocol=https;AccountName=${functionStorage.name};AccountKey=${functionStorage.listKeys().keys[0].value}'
 var appSettings = [
-  {
-    name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-    value: 'c7c3076f-a1be-43f8-9b5b-dad40fc150f0'
-  }
   {
     name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
     value: 'InstrumentationKey=c7c3076f-a1be-43f8-9b5b-dad40fc150f0;IngestionEndpoint=https://northeurope-0.in.applicationinsights.azure.com/'
@@ -77,6 +73,10 @@ var appSettings = [
     value: '0 0 0 * * *'
   }
   {
+    name: 'TimerTriggerScheduleHolidaySyncFunction'
+    value: '0 0 1 1 1 *'
+  }
+  {
     name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
     value: storageConnectionString
   }
@@ -90,7 +90,7 @@ var appSettings = [
   }
 ]
 
-resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
+resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
   name: 'koffbot-dev'
   location: location
   kind: 'functionapp'
@@ -103,7 +103,7 @@ resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
       http20Enabled: true
       appSettings: appSettings
       ftpsState: 'Disabled'
-      netFrameworkVersion: 'v8.0'
+      netFrameworkVersion: 'v10.0'
     }
     clientAffinityEnabled: false
   }

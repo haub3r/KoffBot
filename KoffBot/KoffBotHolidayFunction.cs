@@ -12,11 +12,13 @@ namespace KoffBot;
 
 public class KoffBotHolidayFunction
 {
+    private readonly BlobStorageService _storageService;
     private readonly MessagingService _slackService;
     private readonly ILogger _logger;
 
-    public KoffBotHolidayFunction(MessagingService slackService, ILoggerFactory loggerFactory)
+    public KoffBotHolidayFunction(BlobStorageService storageService, MessagingService slackService, ILoggerFactory loggerFactory)
     {
+        _storageService = storageService;
         _slackService = slackService;
         _logger = loggerFactory.CreateLogger<KoffBotHolidayFunction>();
     }
@@ -26,22 +28,30 @@ public class KoffBotHolidayFunction
     {
         _logger.LogInformation("KoffBot activated. Ready to check for holidays.");
 
-        var clientHandler = new HttpClientHandler() { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate };
-        using var httpClient = new HttpClient(clientHandler);
-
-        var finnishHolidaysEndpoint = $"https://api.boffsaopendata.fi/bankingcalendar/v1/api/v1/BankHolidays?year={DateTime.Now.Year}&pageNumber=1&pageSize=50";
-        var response = await httpClient.GetAsync(finnishHolidaysEndpoint);
-        var responseJson = await response.Content.ReadAsStringAsync();
-
-        var holidays = JsonSerializer.Deserialize<HolidayApiResponse>(responseJson);
-        holidays.SpecialDates.Add(new HolidayApiResponseDetails
-        {
-            Date = $"14.10.{DateTime.Now.Year}",
-            Name = "KoffBotSyntymäpäivä"
-        });
-
+        var holidays = await GetHolidaysAsync();
         var today = DateTime.Today;
-        foreach (var holiday in holidays.SpecialDates)
+        var tomorrow = today.AddDays(1);
+
+        // Check if tomorrow is a holiday (pre-celebration message).
+        foreach (var holiday in holidays)
+        {
+            var parsedDate = DateTime.Parse(holiday.Date, new CultureInfo("fi-FI"));
+            if (tomorrow == parsedDate)
+            {
+                var preCelebration = HolidayMessages.PreCelebrationPossibilities
+                    .Where(m => m.Key == holiday.Name).SingleOrDefault();
+
+                if (preCelebration.Value is not null)
+                {
+                    var message = new HolidaySlackMessage { Text = preCelebration.Value };
+                    await _slackService.PostMessageAsync(message);
+                }
+                break;
+            }
+        }
+
+        // Check if today is a holiday.
+        foreach (var holiday in holidays)
         {
             var parsedDate = DateTime.Parse(holiday.Date, new CultureInfo("fi-FI"));
             if (today != parsedDate)
@@ -59,5 +69,45 @@ public class KoffBotHolidayFunction
             await _slackService.PostMessageAsync(message);
             break;
         }
+    }
+
+    private async Task<List<HolidayApiResponseDetails>> GetHolidaysAsync()
+    {
+        var year = DateTime.Now.Year;
+
+        var stored = await _storageService.GetJsonAsync<List<HolidayApiResponseDetails>>(
+            StorageContainers.Holidays, $"{year}.json");
+
+        if (stored is not null && stored.Count > 0)
+        {
+            _logger.LogInformation("Using {Count} stored holidays for year {Year}.", stored.Count, year);
+            return stored;
+        }
+
+        // Fallback: fetch from API and store.
+        _logger.LogInformation("No stored holidays found for year {Year}. Fetching from API.", year);
+        return await FetchAndStoreHolidaysAsync(year);
+    }
+
+    private async Task<List<HolidayApiResponseDetails>> FetchAndStoreHolidaysAsync(int year)
+    {
+        var clientHandler = new HttpClientHandler() { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate };
+        using var httpClient = new HttpClient(clientHandler);
+
+        var finnishHolidaysEndpoint = $"https://api.boffsaopendata.fi/bankingcalendar/v1/api/v1/BankHolidays?year={year}&pageNumber=1&pageSize=50";
+        var response = await httpClient.GetAsync(finnishHolidaysEndpoint);
+        var responseJson = await response.Content.ReadAsStringAsync();
+
+        var holidays = JsonSerializer.Deserialize<HolidayApiResponse>(responseJson);
+        holidays.SpecialDates.Add(new HolidayApiResponseDetails
+        {
+            Date = $"14.10.{year}",
+            Name = "KoffBotSyntymäpäivä"
+        });
+
+        await _storageService.SetJsonAsync(StorageContainers.Holidays, $"{year}.json", holidays.SpecialDates);
+        _logger.LogInformation("Stored {Count} holidays for year {Year}.", holidays.SpecialDates.Count, year);
+
+        return holidays.SpecialDates;
     }
 }

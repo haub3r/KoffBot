@@ -3,5 +3,6 @@
     <File Path=".github/workflows/koffbot-dev.yml" />
     <File Path=".github/workflows/koffbot-prod.yml" />
   </Folder>
+  <Project Path="KoffBot.Tests/KoffBot.Tests.csproj" />
   <Project Path="KoffBot/KoffBot.csproj" />
 </Solution>

@@ -1,0 +1,242 @@
+[
+  {
+    "name": "KoffBotAdvertisement",
+    "scriptFile": "KoffBot.dll",
+    "entryPoint": "KoffBot.KoffBotAdvertisementFunction.Run",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "req",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "post"
+        ],
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "KoffBotDrunk",
+    "scriptFile": "KoffBot.dll",
+    "entryPoint": "KoffBot.KoffBotDrunkFunction.Run",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "req",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "post"
+        ],
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "KoffBotEcho",
+    "scriptFile": "KoffBot.dll",
+    "entryPoint": "KoffBot.KoffBotEchoFunction.Run",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "req",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "post"
+        ],
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "KoffBotFriday",
+    "scriptFile": "KoffBot.dll",
+    "entryPoint": "KoffBot.KoffBotFridayFunction.Run",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "myTimer",
+        "direction": "In",
+        "type": "timerTrigger",
+        "schedule": "%TimerTriggerScheduleFridayFunction%",
+        "properties": {}
+      }
+    ]
+  },
+  {
+    "name": "KoffBotHoliday",
+    "scriptFile": "KoffBot.dll",
+    "entryPoint": "KoffBot.KoffBotHolidayFunction.Run",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "myTimer",
+        "direction": "In",
+        "type": "timerTrigger",
+        "schedule": "%TimerTriggerScheduleHolidayFunction%",
+        "properties": {}
+      }
+    ]
+  },
+  {
+    "name": "KoffBotHolidaySync",
+    "scriptFile": "KoffBot.dll",
+    "entryPoint": "KoffBot.KoffBotHolidaySyncFunction.Run",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "myTimer",
+        "direction": "In",
+        "type": "timerTrigger",
+        "schedule": "%TimerTriggerScheduleHolidaySyncFunction%",
+        "properties": {}
+      }
+    ]
+  },
+  {
+    "name": "KoffBotPrice",
+    "scriptFile": "KoffBot.dll",
+    "entryPoint": "KoffBot.KoffBotPriceFunction.Run",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "req",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "post"
+        ],
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "KoffBotStats",
+    "scriptFile": "KoffBot.dll",
+    "entryPoint": "KoffBot.KoffBotStatsFunction.Run",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "req",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get"
+        ],
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "KoffBotToast",
+    "scriptFile": "KoffBot.dll",
+    "entryPoint": "KoffBot.KoffBotToastFunction.Run",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "req",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "post"
+        ],
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "KoffBotUntappd",
+    "scriptFile": "KoffBot.dll",
+    "entryPoint": "KoffBot.KoffBotUntappdFunction.Run",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "req",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "post"
+        ],
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  }
+]
