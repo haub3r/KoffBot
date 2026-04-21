@@ -7,6 +7,8 @@ namespace KoffBot.Services;
 
 public static class AuthenticationService
 {
+    private const int MaxAllowedTimestampDifferenceSeconds = 300; // 5 minutes
+
     public static async Task Authenticate(HttpRequestData req)
     {
         req.Headers.TryGetValues("X-Slack-Signature", out var slackSignature);
@@ -16,7 +18,18 @@ public static class AuthenticationService
             throw new AuthenticationException("Access denied. The request was missing one or more Slack headers.");
         }
 
-        var signingSecret = Environment.GetEnvironmentVariable("SlackSigningSecret");
+        // Reject requests older than 5 minutes to prevent replay attacks.
+        if (long.TryParse(slackTimestamp.First(), out var timestamp))
+        {
+            var requestAge = DateTimeOffset.UtcNow.ToUnixTimeSeconds() - timestamp;
+            if (Math.Abs(requestAge) > MaxAllowedTimestampDifferenceSeconds)
+            {
+                throw new AuthenticationException("Access denied. The request timestamp is too old.");
+            }
+        }
+
+        var signingSecret = Environment.GetEnvironmentVariable("SlackSigningSecret")
+            ?? throw new AuthenticationException("SlackSigningSecret environment variable is not configured.");
         var key = Encoding.UTF8.GetBytes(signingSecret);
 
         string baseString = $"v0:{slackTimestamp.First()}:{await req.ReadAsStringAsync()}";

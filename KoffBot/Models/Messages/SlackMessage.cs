@@ -1,8 +1,8 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 
 namespace KoffBot.Models.Messages;
 
-public class ToastSlackMessage
+public class SlackMessage
 {
     [JsonPropertyName("text")]
     public string Text { get; set; }

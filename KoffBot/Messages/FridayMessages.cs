@@ -2,7 +2,7 @@
 
 public static class FridayMessages
 {
-    public static string[] NormalFridayPossibilities =
+    public static readonly string[] NormalFridayPossibilities =
     [
         "Se on perjantai! :meow_party: Mikset juhlisi ottamalla Koff! :koff:",
         "Perjantai! :koff: :koff: :koff:",
@@ -29,7 +29,7 @@ public static class FridayMessages
         "Perjantai on työpäivä. Töiden jälkeen kelpaa raikas ja janon sammuttava Koff!"
     ];
 
-    public static string[] NormalFridayPossibilitiesWinter =
+    public static readonly string[] NormalFridayPossibilitiesWinter =
     [
         "Talvi on synkkä ja kylmä. Piristä mieltäsi ottamalla Koff! :koff:",
         "Ulkona on pimeä :new_moon_with_face: Koff tuo valoa tähänkin perjantaihin (ja elämään)! :koff:",
@@ -38,7 +38,7 @@ public static class FridayMessages
         "ChatGPT:n suusta: \"Perjantai ja Koff, kaksi asiaa jotka ovat yhtä odotettuja kuin joulupukki jouluaattona... Tai no, ainakin jos pukki toisi Koffia lahjaksi.\" No niinpä! Koff! :koff:"
     ];
 
-    public static string[] NormalFridayPossibilitiesSummer =
+    public static readonly string[] NormalFridayPossibilitiesSummer =
     [
         "Perjantai! Aurinko paistaa, uimarannat ovat täynnä ja janon sammuttaa :koff: :koff: :koff: :koff: :koff:",
         "Helteillä auttaa jääkylmä Koff! Nyt on perjantai, mikset ole jo korkannut?",
@@ -47,7 +47,7 @@ public static class FridayMessages
         "ChatGPT:n suusta: \"Perjantai ja Koff, ne ovat kuin juhannussää: aina yhtä pettymys, mutta silti niitä odottaa innolla.\" AI on asioiden äärellä! Koff! :koff:"
     ];
 
-    public static string[] Friday13Possibilities =
+    public static readonly string[] Friday13Possibilities =
     [
         "Perjantai 13. päivä vuonna 1307 oli synkkä temppeliherrojen ritarikunnalle. Heidät vangittiin ja lähes kaikkia kidutettiin brutaalisti. Yksi yleisimmistä tämän ajan metodeista oli ns. 'Strappdo': Kidutettava nostettiin ilmaan pelkkien ranteidensa varassa kunnes heidän olkapäänsä popsahtivat irti luu-aukoistaan. Lopuksi temppeliritarit poltettiin roviolla. Liekeissä heille olisi varmasti maistunut yksi janon sammuttava Koff! :koff:",
         "Perjantai 13. päivä :jason: :knife: Kunnioita synkkää päivää ja katso vaikka kauhuelokuva! Leffajuomaksi kelpaa erinomaisesti janon sammuttava Koff! :koff:",

@@ -42,19 +42,23 @@ public class KoffBotAdvertisementFunction
             var aiDto = new AiRequest
             {
                 MaxTokens = 150,
-                Model = "text-davinci-002",
-                Prompt = "Write an advertisement about beer that is named Koff in Finnish language.",
+                Model = "gpt-4o-mini",
+                Messages =
+                [
+                    new AiMessage { Role = "system", Content = "You are a creative advertising copywriter." },
+                    new AiMessage { Role = "user", Content = "Write an advertisement about beer that is named Koff in Finnish language." }
+                ],
                 Temperature = 0.6
             };
-            var aiRequest = new HttpRequestMessage(HttpMethod.Post, "https://api.openai.com/v1/completions")
+            var aiRequest = new HttpRequestMessage(HttpMethod.Post, "https://api.openai.com/v1/chat/completions")
             {
                 Content = new StringContent(JsonSerializer.Serialize(aiDto), Encoding.UTF8, new MediaTypeHeaderValue("application/json"))
             };
-            aiRequest.Headers.Add("Authorization", Environment.GetEnvironmentVariable("OpenAiApiKey"));
+            aiRequest.Headers.Add("Authorization", $"Bearer {Environment.GetEnvironmentVariable("OpenAiApiKey")}");
             var response = await httpClient.SendAsync(aiRequest);
             var responseContent = await response.Content.ReadAsStringAsync();
             var parsed = JsonSerializer.Deserialize<AiResponse>(responseContent);
-            responseMessage = parsed.Choices.First().Text;
+            responseMessage = parsed.Choices.First().Message.Content;
         }
         catch (Exception e)
         {
@@ -65,7 +69,7 @@ public class KoffBotAdvertisementFunction
         }
 
         // Send message to Slack channel.
-        var slackDto = new PriceSlackMessage
+        var slackDto = new SlackMessage
         {
             Text = responseMessage
         };

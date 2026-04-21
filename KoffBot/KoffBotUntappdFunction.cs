@@ -24,7 +24,7 @@ public class KoffBotUntappdFunction
     {
         _logger.LogInformation("KoffBot activated. Ready to advertise Untappd.");
 
-        var dto = new UntappdSlackMessage
+        var dto = new SlackMessage
         {
             Text = "Muista, että voit arvostella Koffin Untappd-sovelluksessa. Sovelluksen saa osoitteesta: www.untappd.com. Annathan Koffille viisi tähteä :koff:"
         };

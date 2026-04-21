@@ -29,7 +29,7 @@ public class KoffBotDrunkFunction
         _logger.LogInformation("KoffBot activated. Ready to get rip-roaring drunk.");
 
         // Send message to Slack channel.
-        var dto = new DrunkSlackMessage
+        var dto = new SlackMessage
         {
             Text = "KoffBot drank some delicious Koff beer and is now in 'Drunk Mode' for the next hour. Toasting will be difficult."
         };
@@ -50,7 +50,7 @@ public class KoffBotDrunkFunction
         catch (Exception e)
         {
             _logger.LogError(e, "Saving into drunkedness log failed.");
-            var result = req.CreateResponse(HttpStatusCode.OK);
+            var result = req.CreateResponse(HttpStatusCode.InternalServerError);
             result.WriteString("Saving into drunkedness log failed.");
 
             return result;

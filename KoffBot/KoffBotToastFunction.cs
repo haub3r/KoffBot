@@ -48,7 +48,7 @@ public class KoffBotToastFunction
         }
 
         // Send message to Slack channel.
-        var message = new ToastSlackMessage()
+        var message = new SlackMessage()
         {
             Text = "Koff!"
         };
@@ -86,10 +86,9 @@ public class KoffBotToastFunction
 
     private static string ScrambleWord(string str)
     {
-        var rand = new Random();
         var list = new SortedList<int, char>();
         foreach (var c in str)
-            list.Add(rand.Next(), c);
+            list.Add(Random.Shared.Next(), c);
 
         return new string(list.Values.ToArray());
     }

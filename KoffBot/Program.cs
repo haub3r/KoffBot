@@ -22,6 +22,7 @@ public class Program
 				services.AddSingleton<BlobStorageService>();
 				services.AddHttpClient();
 				services.AddSingleton<MessagingService>();
+				services.AddSingleton<HolidayService>();
 			})
 			.Build();
 

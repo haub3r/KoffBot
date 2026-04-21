@@ -2,7 +2,7 @@
 
 public static class HolidayMessages
 {
-    public static Dictionary<string, string> HolidayPossibilities = new Dictionary<string, string>
+    public static readonly Dictionary<string, string> HolidayPossibilities = new Dictionary<string, string>
     {
         {"Uudenvuodenpäivä", "Hyvää uuttavuotta! Eilen taisi mennä muutama Koff! :koff: Uuteen nousuun? Koff!"},
         {"Pitkäperjantai", "Hyvää pitkäperjantaita! Kristus uhrautui jotta saisimme yhden vapaapäivän lisää! :buddy-jesus: Koff!"},
@@ -16,10 +16,10 @@ public static class HolidayMessages
         {"Tapaninpäivä", "Tapaninpäivä on ensimmäisen marttyyrin Stefanoksen ja myös kaikkien muiden marttyyrien muistopäivä. Suomessa tapaninpäivästä on vuosien saatossa tullut myös hevosten ja hevosmiesten juhlapäivä. Mikä siis parempi päivä laittaa joululahjarahat oikealle hevoselle! Mene osoitteeseen unibet.com ja syötä promokoodi 'KOFFBOTSPECIAL' tienaaksesi 5$ ilmaisina vedonlyöntikrediitteinä! Koff! :koff:"},
     };
 
-    public static Dictionary<string, string> PreCelebrationPossibilities = new Dictionary<string, string>
+    public static readonly Dictionary<string, string> PreCelebrationPossibilities = new Dictionary<string, string>
     {
         {"Uudenvuodenpäivä", "Huomenna on uudenvuodenpäivä! Muista varata tarpeeksi Koffeja uuden vuoden juhlintaan! :koff:"},
-        {"Pitkäperjantai", "Huomenna on pitkäperjantai! Hanki ajoissa Koffit, kaupat saattavat mennä kiinni! :koff:"},
+        {"Pitkäperjantai", "Huomenna on pitkäperjantai! Hanki ajoissa Koffit, kaupat saattavat mennä kiinni! :koff: :buddy-jesus:"},
         {"Vappu", "Huomenna on vappu! Olethan varannut tarpeeksi Koffeja huomiseen? :koff:"},
         {"Helatorsta", "Huomenna on helatorstai! Arkivapaapäivä on parasta nautittuna Koffin kera! :koff:"},
         {"Juhannusaatto", "Huomenna on juhannusaatto! Ovatko mökkilavan Koffit jo autossa? :koff: :koff: :koff:"},

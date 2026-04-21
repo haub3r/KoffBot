@@ -52,9 +52,8 @@ public class KoffBotFridayFunction
             }
         }
 
-        Random random = new();
-        int randomIndex = random.Next(0, messages.Length);
-        var dto = new FridaySlackMessage
+        int randomIndex = Random.Shared.Next(0, messages.Length);
+        var dto = new SlackMessage
         {
             Text = messages[randomIndex]
         };

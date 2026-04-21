@@ -72,7 +72,7 @@ public partial class KoffBotPriceFunction
         var fullMessage = $"Koff-tölkin hinta tänään: {price}€{Environment.NewLine}Edellisen tarkistuksen aikainen hinta: {lastPrice}€{Environment.NewLine}{Environment.NewLine}{message}";
 
         // Send message to Slack channel.
-        var dto = new PriceSlackMessage
+        var dto = new SlackMessage
         {
             Text = fullMessage,
         };

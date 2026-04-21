@@ -41,7 +41,7 @@ public class KoffBotEchoFunction
             return req.CreateResponse(HttpStatusCode.Forbidden);
         }
 
-        var dto = new EchoSlackMessage
+        var dto = new SlackMessage
         {
             Text = userMessage
         };
